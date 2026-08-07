@@ -22,11 +22,13 @@ dotnet run -- migrate
 cd frontend && npm install && npm run dev
 ```
 
-Mongo local để dev (khi chưa có Atlas):
+Mongo local để dev (khi chưa có Atlas) — port **27018** vì 27017 đã bị Mongo của CoverGo workspace chiếm:
 
 ```bash
-docker run -d --name tracker-mongo -p 27017:27017 mongo:8
+docker run -d --name tracker-mongo -p 27018:27017 mongo:8
 ```
+
+Backend chạy ở `http://localhost:5199` (launchSettings), frontend dev ở `http://localhost:5173`. Secret key dev nằm trong `backend/src/Api/.env` (gitignored).
 
 ## Addendum so với spec
 
