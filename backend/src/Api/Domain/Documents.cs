@@ -187,6 +187,12 @@ public sealed class DailyEntry
 
     /// <summary>Mốc cập nhật theo từng trường — last-write-wins khi sync (§10).</summary>
     public Dictionary<string, DateTime> FieldUpdatedAt { get; set; } = [];
+
+    /// <summary>
+    /// Key các field "để sau" thuộc về ngày này mà chưa được điền (spec §5).
+    /// Marker thuần — không giữ ngày ở trạng thái lửng lơ, không tính là dữ liệu.
+    /// </summary>
+    public List<string> Deferred { get; set; } = [];
 }
 
 /// <summary>

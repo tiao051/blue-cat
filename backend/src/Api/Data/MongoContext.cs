@@ -21,9 +21,12 @@ public sealed class MongoContext
     }
 
     public MongoContext(IConfiguration config)
+        : this(config["MONGO_URI"] ?? "mongodb://localhost:27018", config["MONGO_DB"] ?? "tracker")
     {
-        var uri = config["MONGO_URI"] ?? "mongodb://localhost:27018";
-        var dbName = config["MONGO_DB"] ?? "tracker";
+    }
+
+    public MongoContext(string uri, string dbName)
+    {
         Client = new MongoClient(uri);
         Database = Client.GetDatabase(dbName);
     }
