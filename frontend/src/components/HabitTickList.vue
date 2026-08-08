@@ -5,6 +5,7 @@
 import { computed } from 'vue'
 import UiStepper from '@/components/ui/UiStepper.vue'
 import UiSelect from '@/components/ui/UiSelect.vue'
+import { pixelIcon } from '@/lib/pixelIcons'
 import type { Habit, HabitEntry, HabitState } from '@/api/types'
 
 const props = defineProps<{
@@ -89,6 +90,9 @@ function setQuality(habit: Habit, quality: string | number | null) {
         </span>
       </button>
 
+      <!-- the habit's item icon, like an item sitting next to its slot -->
+      <span class="item-icon" aria-hidden="true" v-html="pixelIcon(habit.icon)" />
+
       <span class="habit-label">{{ habit.label }}</span>
 
       <!-- Metadata inline (desktop) / wrapped below (mobile) -->
@@ -143,14 +147,32 @@ function setQuality(habit: Habit, quality: string | number | null) {
 }
 .habit-row {
   display: grid;
-  grid-template-columns: auto 1fr auto;
+  grid-template-columns: auto auto 1fr auto;
   grid-template-areas:
-    'check label x'
-    '. meta meta';
+    'check icon label x'
+    '. . meta meta';
   align-items: center;
   column-gap: 0.25rem;
   padding: 0.35rem 0.5rem 0.35rem 0.25rem;
   transition: background 100ms;
+}
+.item-icon {
+  grid-area: icon;
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.item-icon :deep(svg) {
+  width: 18px;
+  height: 18px;
+  image-rendering: pixelated;
+}
+/* items dim when the habit is resolved */
+.done .item-icon,
+.not-done .item-icon {
+  opacity: 0.55;
 }
 .habit-row + .habit-row {
   border-top: 1px solid var(--border);
@@ -285,8 +307,8 @@ function setQuality(habit: Habit, quality: string | number | null) {
 /* Desktop: single-line rows — meta inline right, ✗ only on hover (Todoist pattern) */
 @media (min-width: 900px) {
   .habit-row {
-    grid-template-columns: auto 1fr auto auto;
-    grid-template-areas: 'check label meta x';
+    grid-template-columns: auto auto 1fr auto auto;
+    grid-template-areas: 'check icon label meta x';
     column-gap: 0.5rem;
     padding-right: 0.4rem;
   }

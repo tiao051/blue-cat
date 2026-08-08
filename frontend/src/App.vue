@@ -34,6 +34,15 @@ const tabs = [
 </script>
 
 <template>
+  <!-- the world behind the panel: square moon, blocky clouds, a grass horizon -->
+  <div class="world" aria-hidden="true">
+    <div class="moon"></div>
+    <div class="cloud c1"></div>
+    <div class="cloud c2"></div>
+    <div class="cloud c3"></div>
+    <div class="horizon"></div>
+  </div>
+
   <!-- square pixel particles drifting over the world, MC-style fireflies at dusk -->
   <div class="fireflies" aria-hidden="true">
     <span v-for="i in 9" :key="i" class="fly" />
@@ -80,6 +89,74 @@ const tabs = [
   min-height: 100dvh;
 }
 
+/* ---- the world ---- */
+.world {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+/* a square moon with blocky craters and a soft moonlight bloom */
+.moon {
+  position: absolute;
+  top: 7%;
+  right: 11%;
+  width: 52px;
+  height: 52px;
+  background: #e9ecd8;
+  box-shadow:
+    inset -12px -10px 0 #ccd2b4,
+    inset 8px 10px 0 #f5f7e8,
+    0 0 46px 12px rgba(210, 225, 255, 0.28);
+}
+.moon::after {
+  content: '';
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: #bcc2a4;
+  top: 12px;
+  left: 14px;
+  box-shadow: 18px 14px 0 #bcc2a4, 6px 26px 0 4px #c5cbab;
+}
+
+/* flat blocky clouds drifting across the night sky */
+.cloud {
+  position: absolute;
+  width: 84px;
+  height: 12px;
+  background: #dfe6f2;
+  opacity: 0.13;
+  box-shadow: 24px -12px 0 #dfe6f2, -24px 0 0 #dfe6f2, 48px 0 0 #dfe6f2, 12px 12px 0 #dfe6f2;
+  animation: cloud-drift linear infinite;
+}
+.c1 { top: 13%; animation-duration: 150s; }
+.c2 { top: 24%; animation-duration: 210s; animation-delay: -80s; transform: scale(1.5); }
+.c3 { top: 5%;  animation-duration: 260s; animation-delay: -160s; transform: scale(0.8); opacity: 0.09; }
+@keyframes cloud-drift {
+  from { left: -160px; }
+  to   { left: 110vw; }
+}
+
+/* the grass-topped dirt horizon at the bottom of the world */
+.horizon {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 112px;
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='8'%3E%3Crect width='16' height='5' fill='%23477a2d'/%3E%3Crect x='0' y='0' width='4' height='3' fill='%23548c35'/%3E%3Crect x='8' y='0' width='5' height='2' fill='%23548c35'/%3E%3Crect x='2' y='5' width='3' height='2' fill='%23477a2d'/%3E%3Crect x='9' y='5' width='4' height='3' fill='%23477a2d'/%3E%3C/svg%3E"),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Crect width='8' height='8' fill='%2326201a'/%3E%3Crect x='1' y='0' width='2' height='2' fill='%232e2620'/%3E%3Crect x='5' y='1' width='2' height='2' fill='%23201a15'/%3E%3Crect x='0' y='4' width='2' height='2' fill='%23231d17'/%3E%3Crect x='3' y='3' width='2' height='2' fill='%232b231c'/%3E%3Crect x='6' y='5' width='2' height='2' fill='%23312822'/%3E%3Crect x='2' y='6' width='2' height='2' fill='%231e1813'/%3E%3C/svg%3E");
+  background-repeat: repeat-x, repeat;
+  background-size: 64px 32px, 48px 48px;
+  background-position: top, 0 24px;
+  image-rendering: pixelated;
+  box-shadow: 0 -18px 30px rgba(0, 0, 0, 0.35);
+}
+
 /* fireflies: blocky particles with a bloom halo, drifting slowly */
 .fireflies {
   position: fixed;
@@ -118,13 +195,27 @@ const tabs = [
 }
 /* content lives on one big inventory panel — like an opened chest over the world */
 .content-inner {
+  position: relative;
   margin: 0.9rem auto calc(92px + env(safe-area-inset-bottom));
-  padding: 1.25rem 1rem;
+  padding: 1.6rem 1rem 1.25rem;
   max-width: 640px;
   /* subtle top-light on the panel + soft ambient shadow beneath it (shader AO) */
   background: linear-gradient(180deg, #cdcdcd 0%, var(--surface) 18%, #bfbfbf 100%);
   border: 2px solid #1a1a1a;
   box-shadow: var(--bevel-out), 0 18px 48px rgba(0, 0, 0, 0.55);
+}
+/* grass growing along the panel's top edge — the panel is a block seen from the side */
+.content-inner::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 8px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='8'%3E%3Crect width='16' height='6' fill='%23548c35'/%3E%3Crect x='0' y='0' width='4' height='4' fill='%2363a03f'/%3E%3Crect x='9' y='0' width='4' height='3' fill='%2363a03f'/%3E%3Crect x='3' y='6' width='3' height='2' fill='%23548c35'/%3E%3Crect x='11' y='6' width='3' height='2' fill='%23548c35'/%3E%3C/svg%3E");
+  background-size: 32px 8px;
+  image-rendering: pixelated;
+  pointer-events: none;
 }
 .fullscreen .content-inner {
   margin: 0;
@@ -156,6 +247,7 @@ const tabs = [
   gap: 6px;
   flex: 1;
   max-width: 420px;
+  counter-reset: slot;
 }
 /* each tab is a hotbar slot; the active one gets the thick white selection frame */
 .nav-item {
@@ -170,6 +262,19 @@ const tabs = [
   background: rgba(139, 139, 139, 0.25);
   border: 2px solid #4f4f4f;
   box-shadow: var(--bevel-in);
+  position: relative;
+  counter-increment: slot;
+}
+/* tiny slot number, like hotbar keybinds */
+.nav-item::before {
+  content: counter(slot);
+  position: absolute;
+  top: 1px;
+  left: 4px;
+  font-family: var(--font-data);
+  font-size: 8px;
+  color: rgba(255, 255, 255, 0.45);
+  text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.8);
 }
 .nav-item.active {
   color: #fff;

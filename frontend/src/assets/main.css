@@ -73,18 +73,19 @@ body {
   font-size: 14px;
   line-height: 1.6;
   color: var(--text);
-  /* hand-drawn dirt tile (8x8 px, 4 browns), scaled up and pixelated */
-  background-color: var(--bg);
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Crect width='8' height='8' fill='%2326201a'/%3E%3Crect x='1' y='0' width='2' height='2' fill='%232e2620'/%3E%3Crect x='5' y='1' width='2' height='2' fill='%23201a15'/%3E%3Crect x='0' y='4' width='2' height='2' fill='%23231d17'/%3E%3Crect x='3' y='3' width='2' height='2' fill='%232b231c'/%3E%3Crect x='6' y='5' width='2' height='2' fill='%23312822'/%3E%3Crect x='2' y='6' width='2' height='2' fill='%231e1813'/%3E%3C/svg%3E");
-  background-size: 64px 64px;
+  /* a Minecraft night: deep navy sky with hand-placed pixel stars */
+  background-color: #0a0d1c;
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='96' height='96'%3E%3Crect x='8' y='10' width='2' height='2' fill='%23e8ecff' opacity='.8'/%3E%3Crect x='40' y='4' width='2' height='2' fill='%23cdd6ff' opacity='.5'/%3E%3Crect x='70' y='18' width='2' height='2' fill='%23ffffff' opacity='.9'/%3E%3Crect x='22' y='38' width='2' height='2' fill='%23cdd6ff' opacity='.4'/%3E%3Crect x='58' y='46' width='2' height='2' fill='%23e8ecff' opacity='.6'/%3E%3Crect x='86' y='58' width='2' height='2' fill='%23cdd6ff' opacity='.45'/%3E%3Crect x='12' y='70' width='2' height='2' fill='%23ffffff' opacity='.55'/%3E%3Crect x='46' y='82' width='2' height='2' fill='%23e8ecff' opacity='.35'/%3E%3C/svg%3E"),
+    linear-gradient(180deg, #080a16 0%, #0d1122 40%, #141b32 70%, #1b2340 100%);
   image-rendering: pixelated;
   -webkit-font-smoothing: none;
   font-smooth: never;
 }
 
 /*
- * "Shaders on" — screen-space atmosphere, like a shader pack over the blocky world:
- * a golden-hour light shaft + warm ambient glow behind the content...
+ * "Shaders on" — screen-space atmosphere over the night world:
+ * moonlight shaft from the moon's corner + a warm campfire glow pooling below.
  */
 body::before {
   content: '';
@@ -93,12 +94,11 @@ body::before {
   z-index: 0;
   pointer-events: none;
   background:
-    /* god ray: soft diagonal beam from the top-left */
-    linear-gradient(115deg, rgba(255, 208, 120, 0.14) 0%, rgba(255, 208, 120, 0.05) 22%, transparent 45%),
-    /* warm sun glow pooling near the top */
-    radial-gradient(ellipse 70% 45% at 22% -8%, rgba(255, 186, 92, 0.22), transparent 60%),
-    /* faint cool bounce light from below, torch-lit cave feel */
-    radial-gradient(ellipse 80% 40% at 78% 108%, rgba(120, 160, 90, 0.1), transparent 65%);
+    /* moonbeam: pale shaft from the top-right, where the moon hangs */
+    linear-gradient(245deg, rgba(190, 205, 255, 0.12) 0%, rgba(190, 205, 255, 0.04) 25%, transparent 50%),
+    radial-gradient(ellipse 55% 40% at 82% -5%, rgba(200, 215, 255, 0.18), transparent 60%),
+    /* warm torch/campfire glow rising from the ground */
+    radial-gradient(ellipse 85% 45% at 30% 108%, rgba(255, 170, 80, 0.14), transparent 65%);
 }
 
 /* ...and a gentle vignette over everything, corners falling into shadow */

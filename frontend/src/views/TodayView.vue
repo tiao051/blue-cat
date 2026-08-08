@@ -311,6 +311,29 @@ onMounted(refresh)
   text-shadow: var(--px-text-shadow);
   cursor: pointer;
   transition: filter 60ms;
+  position: relative;
+  overflow: hidden;
+}
+/* enchantment glint: a purple-white shimmer sweeping across, like an enchanted item */
+.cta-primary::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    115deg,
+    transparent 30%,
+    rgba(216, 180, 255, 0.22) 44%,
+    rgba(255, 255, 255, 0.3) 50%,
+    rgba(216, 180, 255, 0.22) 56%,
+    transparent 70%
+  );
+  transform: translateX(-130%);
+  animation: glint 4.5s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes glint {
+  0% { transform: translateX(-130%); }
+  40%, 100% { transform: translateX(130%); }
 }
 .cta:hover {
   filter: brightness(1.12);

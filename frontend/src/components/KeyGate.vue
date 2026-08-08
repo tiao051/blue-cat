@@ -17,6 +17,7 @@ function save() {
   <div class="gate">
     <div class="gate-card">
       <p class="overline">daily tracker</p>
+      <span class="splash" aria-hidden="true">Track every day!</span>
       <h1 class="gate-title">Enter your secret key</h1>
       <p class="muted">Only needed once on this device.</p>
       <UiInput v-model="input" type="password" mono placeholder="secret key" @enter="save" />
@@ -34,6 +35,7 @@ function save() {
   padding: 1.5rem;
 }
 .gate-card {
+  position: relative;
   width: 100%;
   max-width: 360px;
   display: flex;
@@ -43,6 +45,24 @@ function save() {
   border: 2px solid #1a1a1a;
   box-shadow: var(--bevel-out);
   background: var(--surface);
+}
+/* the pulsing yellow splash text from the title screen */
+.splash {
+  position: absolute;
+  top: 0.6rem;
+  right: -1.5rem;
+  transform: rotate(-14deg);
+  font-family: var(--font-data);
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #ffff55;
+  text-shadow: 2px 2px 0 #3f3f10;
+  animation: splash-pulse 0.5s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+@keyframes splash-pulse {
+  from { transform: rotate(-14deg) scale(1); }
+  to   { transform: rotate(-14deg) scale(1.07); }
 }
 .gate-title {
   margin: 0;
