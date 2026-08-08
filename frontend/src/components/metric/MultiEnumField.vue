@@ -34,7 +34,7 @@ function toggle(value: string) {
     >
       {{ opt.label }}
     </button>
-    <p v-if="def.maxSelect" class="hint">Chọn tối đa {{ def.maxSelect }}</p>
+    <p v-if="def.maxSelect" class="hint data">tối đa {{ def.maxSelect }}</p>
   </div>
 </template>
 
@@ -45,19 +45,24 @@ function toggle(value: string) {
   gap: 0.5rem;
 }
 .chip {
-  padding: 0.6rem 1rem;
-  border-radius: 999px;
-  border: 1px solid var(--p-surface-300);
-  background: var(--p-surface-0);
-  color: var(--p-text-color);
-  font-size: 0.95rem;
+  padding: 0 0.9rem;
+  min-height: var(--tap);
+  border-radius: var(--radius);
+  border: 1px solid var(--border-strong);
+  background: var(--surface);
+  color: var(--text);
+  font-size: 0.9rem;
   cursor: pointer;
-  min-height: 44px; /* vùng chạm mobile */
+  transition: background 100ms, border-color 100ms;
+}
+.chip:not(:disabled):not(.selected):hover {
+  border-color: var(--accent);
 }
 .chip.selected {
-  background: var(--p-primary-color);
-  border-color: var(--p-primary-color);
-  color: var(--p-primary-contrast-color);
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--on-accent);
+  font-weight: 500;
 }
 .chip:disabled {
   opacity: 0.35;
@@ -66,17 +71,7 @@ function toggle(value: string) {
 .hint {
   width: 100%;
   margin: 0.25rem 0 0;
-  font-size: 0.8rem;
-  color: var(--p-text-muted-color);
-}
-@media (prefers-color-scheme: dark) {
-  .chip {
-    background: var(--p-surface-900);
-    border-color: var(--p-surface-700);
-  }
-  .chip.selected {
-    background: var(--p-primary-color);
-    border-color: var(--p-primary-color);
-  }
+  font-size: 0.72rem;
+  color: var(--text-faint);
 }
 </style>

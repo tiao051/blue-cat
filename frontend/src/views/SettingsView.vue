@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import Button from 'primevue/button'
+import UiButton from '@/components/ui/UiButton.vue'
 import { useSessionStore } from '@/stores/session'
 
 const session = useSessionStore()
@@ -13,21 +13,22 @@ const session = useSessionStore()
       Thêm/sửa habit và biến theo dõi: insert document vào MongoDB — form tự cập nhật, không cần
       deploy. UI đầy đủ là chuyện v2.
     </p>
-    <Button label="Đổi secret key" severity="secondary" outlined @click="session.reset()" />
+    <UiButton label="Đổi secret key" variant="ghost" @click="session.reset()" />
   </div>
 </template>
 
 <style scoped>
 .settings {
-  padding: 1rem;
-  max-width: 640px;
-  margin: 0 auto;
   display: flex;
   flex-direction: column;
   gap: 1rem;
   align-items: flex-start;
 }
+.settings h1 {
+  margin: 0;
+}
 .muted {
-  color: var(--p-text-muted-color);
+  color: var(--text-muted);
+  margin: 0;
 }
 </style>

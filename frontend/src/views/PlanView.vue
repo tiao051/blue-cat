@@ -12,7 +12,7 @@ onMounted(async () => {
     const data = await execute<{ yearGoal: Goal | null }>(YEAR_GOAL_QUERY)
     goal.value = data.yearGoal
   } catch {
-    /* chưa có key hoặc backend chưa chạy — màn này không quan trọng tới mức báo lỗi */
+    /* màn phụ — không cần báo lỗi */
   }
 })
 </script>
@@ -20,25 +20,39 @@ onMounted(async () => {
 <template>
   <div class="plan">
     <h1>Kế hoạch</h1>
-    <p v-if="goal" class="year-goal">🎯 {{ goal.title }}</p>
-    <p class="muted">Chỉ tiêu tuần + backlog sẽ có ở M3.</p>
+    <div v-if="goal" class="year-goal">
+      <span class="overline">mục tiêu năm</span>
+      <span class="goal-title">{{ goal.title }}</span>
+    </div>
+    <p class="muted data">tầng tuần — M3</p>
   </div>
 </template>
 
 <style scoped>
 .plan {
-  padding: 1rem;
-  max-width: 640px;
-  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.plan h1 {
+  margin: 0;
 }
 .year-goal {
-  font-size: 1.15rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+.goal-title {
+  font-size: 1.1rem;
   font-weight: 600;
-  padding: 0.75rem 1rem;
-  border: 1px solid var(--p-surface-200);
-  border-radius: 10px;
 }
 .muted {
-  color: var(--p-text-muted-color);
+  color: var(--text-faint);
+  font-size: 0.8rem;
 }
 </style>

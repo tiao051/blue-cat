@@ -10,7 +10,7 @@ import { logicalToday, addDays } from '@/lib/dates'
 import { toRaw } from '@/lib/metricValues'
 import { useDefinitionsStore } from '@/stores/definitions'
 import CheckinWizard from '@/components/CheckinWizard.vue'
-import Message from 'primevue/message'
+import UiMessage from '@/components/ui/UiMessage.vue'
 
 const router = useRouter()
 const definitions = useDefinitionsStore()
@@ -64,9 +64,7 @@ async function onFinish(values: MetricValueInput[], deferredKeys: string[]) {
 </script>
 
 <template>
-  <Message v-if="error" severity="error" :closable="false" style="margin: 1rem">
-    {{ error }}
-  </Message>
+  <UiMessage v-if="error" severity="error" style="margin: 1rem">{{ error }}</UiMessage>
   <CheckinWizard
     v-if="steps"
     :steps="steps"

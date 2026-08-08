@@ -1,7 +1,6 @@
 <script setup lang="ts">
-// Dải 10 ô màu, vuốt ngang hoặc chạm, số lớn phía trên (spec §5 swipe-scale).
-// Tự viết — không có widget PrimeVue tương đương. Ô ~24px là điểm treo ở spec §12,
-// nên hỗ trợ cả drag để chọn chính xác.
+// Dải 10 ô, vuốt ngang hoặc chạm, số lớn phía trên (spec §5 swipe-scale).
+// Instrument: ô là vạch đo, giá trị chạy mono, đậm dần theo mức — không đỏ/vàng/xanh.
 import { computed, ref } from 'vue'
 import type { MetricDefinition } from '@/api/types'
 
@@ -43,8 +42,9 @@ function onPointerUp() {
 
 <template>
   <div class="scale-field">
-    <div class="scale-value" :class="{ empty: model === null }">
-      {{ model ?? '–' }}
+    <div class="scale-readout data" :class="{ empty: model === null }">
+      <span class="value">{{ model ?? '–' }}</span>
+      <span class="range">/ {{ max }}</span>
     </div>
     <div
       ref="track"
@@ -62,7 +62,7 @@ function onPointerUp() {
         :style="{ '--cell-strength': (v - min) / (max - min) }"
       />
     </div>
-    <div class="scale-bounds">
+    <div class="scale-bounds data">
       <span>{{ min }}</span>
       <span>{{ max }}</span>
     </div>
@@ -76,51 +76,59 @@ function onPointerUp() {
   gap: 0.75rem;
   touch-action: pan-y;
 }
-.scale-value {
-  font-size: 3.5rem;
-  font-weight: 700;
-  text-align: center;
-  line-height: 1;
+.scale-readout {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 0.4rem;
   min-height: 3.5rem;
-  color: var(--p-primary-color);
 }
-.scale-value.empty {
-  color: var(--p-text-muted-color);
+.scale-readout .value {
+  font-size: 3.25rem;
+  font-weight: 600;
+  line-height: 1;
+  color: var(--accent);
+}
+.scale-readout.empty .value {
+  color: var(--text-faint);
+}
+.scale-readout .range {
+  font-size: 1rem;
+  color: var(--text-faint);
 }
 .scale-track {
   display: flex;
-  gap: 4px;
+  gap: 3px;
   height: 56px;
   cursor: pointer;
   user-select: none;
   touch-action: none;
+  padding: 4px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
 }
 .scale-cell {
   flex: 1;
-  border-radius: 6px;
-  background: var(--p-surface-200);
-  transition: background 80ms;
+  border-radius: 2px;
+  background: var(--surface-raised);
+  transition: background 60ms;
 }
 .scale-cell.active {
   background: color-mix(
     in srgb,
-    var(--p-primary-color) calc(35% + 65% * var(--cell-strength)),
-    var(--p-surface-100)
+    var(--accent) calc(30% + 70% * var(--cell-strength)),
+    var(--surface-raised)
   );
 }
 .scale-cell.current {
-  outline: 2px solid var(--p-primary-color);
+  outline: 1.5px solid var(--accent);
   outline-offset: 1px;
 }
 .scale-bounds {
   display: flex;
   justify-content: space-between;
-  color: var(--p-text-muted-color);
-  font-size: 0.8rem;
-}
-@media (prefers-color-scheme: dark) {
-  .scale-cell {
-    background: var(--p-surface-800);
-  }
+  color: var(--text-faint);
+  font-size: 0.75rem;
 }
 </style>

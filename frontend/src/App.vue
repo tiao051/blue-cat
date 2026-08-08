@@ -1,6 +1,6 @@
 <script setup lang="ts">
-// Nav 4 mục: Hôm nay · Kế hoạch · Phân tích · Cài đặt (spec §9).
-// Màn check-in full-screen tự che tab bar (meta.fullscreen).
+// Nav 4 mục (spec §9): mobile = bottom tab bar, desktop ≥900px = sidebar trái.
+// Màn check-in full-screen tự che nav (meta.fullscreen).
 import { useRoute } from 'vue-router'
 import { useSessionStore } from '@/stores/session'
 import KeyGate from '@/components/KeyGate.vue'
@@ -8,74 +8,181 @@ import KeyGate from '@/components/KeyGate.vue'
 const route = useRoute()
 const session = useSessionStore()
 
+// icon: stroke 1.5px, hình học tối giản — không emoji
 const tabs = [
-  { to: '/', label: 'Hôm nay', icon: '📅' },
-  { to: '/plan', label: 'Kế hoạch', icon: '🗂️' },
-  { to: '/analysis', label: 'Phân tích', icon: '📊' },
-  { to: '/settings', label: 'Cài đặt', icon: '⚙️' },
+  {
+    to: '/',
+    label: 'Hôm nay',
+    d: 'M4 5h16v15H4z M4 9h16 M8 5V3 M16 5V3',
+  },
+  {
+    to: '/plan',
+    label: 'Kế hoạch',
+    d: 'M4 6h10 M4 12h16 M4 18h13 M17 4l3 2-3 2',
+  },
+  {
+    to: '/analysis',
+    label: 'Phân tích',
+    d: 'M5 20V10 M12 20V4 M19 20v-7',
+  },
+  {
+    to: '/settings',
+    label: 'Cài đặt',
+    d: 'M4 8h10 M17 8h3 M14 5v6 M4 16h3 M10 16h10 M7 13v6',
+  },
 ]
 </script>
 
 <template>
   <KeyGate v-if="!session.hasKey" />
   <template v-else>
-    <main class="app-main" :class="{ fullscreen: route.meta.fullscreen }">
-      <RouterView />
-    </main>
-    <nav v-if="!route.meta.fullscreen" class="tab-bar">
-      <RouterLink
-        v-for="tab in tabs"
-        :key="tab.to"
-        :to="tab.to"
-        class="tab"
-        active-class="active"
-      >
-        <span class="tab-icon">{{ tab.icon }}</span>
-        <span class="tab-label">{{ tab.label }}</span>
-      </RouterLink>
-    </nav>
+    <div class="shell" :class="{ fullscreen: route.meta.fullscreen }">
+      <nav v-if="!route.meta.fullscreen" class="nav">
+        <p class="brand overline">tracker</p>
+        <div class="nav-items">
+          <RouterLink
+            v-for="tab in tabs"
+            :key="tab.to"
+            :to="tab.to"
+            class="nav-item"
+            active-class="active"
+          >
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path :d="tab.d" />
+            </svg>
+            <span class="nav-label">{{ tab.label }}</span>
+          </RouterLink>
+        </div>
+      </nav>
+
+      <main class="content">
+        <div class="content-inner">
+          <RouterView />
+        </div>
+      </main>
+    </div>
   </template>
 </template>
 
 <style scoped>
-.app-main {
+.shell {
   min-height: 100dvh;
-  padding-bottom: 72px;
 }
-.app-main.fullscreen {
-  padding-bottom: 0;
+.content {
+  min-height: 100dvh;
 }
-.tab-bar {
+.content-inner {
+  padding: 1.25rem 1rem calc(84px + env(safe-area-inset-bottom));
+  max-width: 640px;
+  margin: 0 auto;
+}
+.fullscreen .content-inner {
+  padding: 0;
+  max-width: none;
+}
+
+/* ---- Mobile: bottom tab bar ---- */
+.nav {
   position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
+  z-index: 50;
   display: flex;
-  border-top: 1px solid var(--p-surface-200);
-  background: var(--p-surface-0);
+  border-top: 1px solid var(--border);
+  background: var(--surface);
   padding-bottom: env(safe-area-inset-bottom);
 }
-.tab {
+.brand {
+  display: none;
+}
+.nav-items {
+  display: flex;
+  flex: 1;
+}
+.nav-item {
   flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2px;
-  padding: 0.5rem 0;
+  gap: 3px;
+  padding: 0.55rem 0 0.5rem;
   text-decoration: none;
-  color: var(--p-text-muted-color);
-  font-size: 0.7rem;
+  color: var(--text-muted);
 }
-.tab.active {
-  color: var(--p-primary-color);
+.nav-item.active {
+  color: var(--accent);
 }
-.tab-icon {
-  font-size: 1.25rem;
+.nav-icon {
+  width: 21px;
+  height: 21px;
 }
-@media (prefers-color-scheme: dark) {
-  .tab-bar {
-    background: var(--p-surface-950);
-    border-color: var(--p-surface-800);
+.nav-label {
+  font-size: 0.66rem;
+  font-family: var(--font-data);
+  letter-spacing: 0.02em;
+}
+
+/* ---- Desktop ≥900px: sidebar trái ---- */
+@media (min-width: 900px) {
+  .shell {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+  }
+  .shell.fullscreen {
+    display: block;
+  }
+  .nav {
+    position: sticky;
+    top: 0;
+    bottom: auto;
+    height: 100dvh;
+    flex-direction: column;
+    border-top: none;
+    border-right: 1px solid var(--border);
+    background: var(--surface);
+    padding: 1.25rem 0.75rem;
+    gap: 1.5rem;
+  }
+  .brand {
+    display: block;
+    margin: 0 0 0 0.65rem;
+    color: var(--accent);
+  }
+  .nav-items {
+    flex-direction: column;
+    gap: 0.25rem;
+    flex: initial;
+  }
+  .nav-item {
+    flex-direction: row;
+    gap: 0.65rem;
+    padding: 0.55rem 0.65rem;
+    border-radius: var(--radius);
+    align-items: center;
+  }
+  .nav-item:hover {
+    color: var(--text);
+    background: var(--surface-raised);
+  }
+  .nav-item.active {
+    color: var(--accent);
+    background: var(--accent-dim);
+  }
+  .nav-icon {
+    width: 19px;
+    height: 19px;
+  }
+  .nav-label {
+    font-size: 0.85rem;
+    font-family: var(--font-ui);
+    font-weight: 500;
+  }
+  .content-inner {
+    padding: 2.5rem 2rem 3rem;
+    max-width: 720px;
+    margin: 0;
   }
 }
 </style>

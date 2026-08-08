@@ -1,11 +1,10 @@
 <script setup lang="ts">
-// Màn Hôm nay — M1: CTA check-in, habit tick list, field để-sau, đổi dayType.
-// Lưới icon + task + khối Công việc là chuyện M2 (spec §9.2).
+// Màn Hôm nay — M1: CTA check-in, bảng habit, field để-sau, đổi dayType.
 import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import Button from 'primevue/button'
-import Select from 'primevue/select'
-import Message from 'primevue/message'
+import UiButton from '@/components/ui/UiButton.vue'
+import UiSelect from '@/components/ui/UiSelect.vue'
+import UiMessage from '@/components/ui/UiMessage.vue'
 import { executeMutation, execute } from '@/api/client'
 import {
   SET_DAY_TYPE_MUTATION,
@@ -39,10 +38,10 @@ const error = ref('')
 const loading = ref(true)
 
 const dayTypeOptions: { label: string; value: DayType }[] = [
-  { label: 'Ngày làm', value: 'WORKDAY' },
-  { label: 'Cuối tuần', value: 'WEEKEND' },
-  { label: 'Nghỉ phép', value: 'DAYOFF' },
-  { label: 'Ốm', value: 'SICK' },
+  { label: 'ngày làm', value: 'WORKDAY' },
+  { label: 'cuối tuần', value: 'WEEKEND' },
+  { label: 'nghỉ phép', value: 'DAYOFF' },
+  { label: 'ốm', value: 'SICK' },
 ]
 
 const needsMorning = computed(() => !!entry.value && !entry.value.morningCheckinAt)
@@ -56,7 +55,6 @@ async function refresh() {
     entry.value = data.today.entry
     deferred.value = data.today.deferred
 
-    // Definitions cho field để-sau (render bằng MetricField như mọi field khác)
     if (deferred.value.length > 0) {
       const defs = await definitions.fetchDefinitions()
       deferredDefs.value = Object.fromEntries(defs.map((d) => [d.key, d]))
@@ -84,7 +82,7 @@ const onHabitChange = (habitKey: string, state: HabitState, hours: number | null
     executeMutation(SET_HABIT_MUTATION, { date: today, habitKey, state, hours, quality }),
   )
 
-const onDayTypeChange = (dayType: DayType) =>
+const onDayTypeChange = (dayType: string | number | null) =>
   run(() => executeMutation(SET_DAY_TYPE_MUTATION, { date: today, dayType }))
 
 const submitDeferred = (field: DeferredField) => {
@@ -107,40 +105,41 @@ onMounted(refresh)
 <template>
   <div class="today">
     <header class="today-header">
-      <div>
+      <div class="date-block">
+        <p class="overline">{{ today }}</p>
         <h1 class="date-title">{{ formatDisplay(today) }}</h1>
-        <p class="date-sub">{{ today }}</p>
       </div>
-      <Select
+      <UiSelect
         v-if="entry"
         :model-value="entry.dayType"
         :options="dayTypeOptions"
-        option-label="label"
-        option-value="value"
-        size="small"
         @update:model-value="onDayTypeChange"
       />
     </header>
 
-    <Message v-if="error" severity="error" :closable="false">{{ error }}</Message>
-    <p v-if="loading" class="muted">Đang tải…</p>
+    <UiMessage v-if="error" severity="error">{{ error }}</UiMessage>
+    <p v-if="loading" class="muted data">đang tải…</p>
 
     <template v-if="entry && !loading">
-      <!-- CTA check-in -->
-      <Button
+      <UiButton
         v-if="needsMorning"
-        label="☀️ Check-in sáng"
-        size="large"
-        fluid
+        label="Check-in sáng →"
+        size="lg"
+        block
         @click="router.push('/checkin/morning')"
       />
 
-      <!-- Field để sau: dòng thường, ghi rõ ngày nó thuộc về (spec §9.2) -->
+      <!-- Field để sau: ghi rõ ngày nó thuộc về (spec §9.2) -->
       <section v-if="deferred.length > 0" class="section">
-        <h2 class="section-title">Còn thiếu</h2>
-        <div v-for="field in deferred" :key="`${field.key}:${field.belongsToDate}`" class="deferred-row">
+        <h2 class="overline section-title">Còn thiếu</h2>
+        <div
+          v-for="field in deferred"
+          :key="`${field.key}:${field.belongsToDate}`"
+          class="deferred-row"
+        >
           <p class="deferred-label">
-            {{ field.label }} <span class="muted">— thuộc về {{ field.belongsToDate }}</span>
+            {{ field.label }}
+            <span class="deferred-date data">{{ field.belongsToDate }}</span>
           </p>
           <div v-if="deferredDefs[field.key]" class="deferred-input">
             <MetricField
@@ -148,14 +147,13 @@ onMounted(refresh)
               :show-label="false"
               v-model="deferredRaw[field.key]"
             />
-            <Button label="Lưu" size="small" @click="submitDeferred(field)" />
+            <UiButton label="Lưu" size="sm" @click="submitDeferred(field)" />
           </div>
         </div>
       </section>
 
-      <!-- Habit -->
       <section class="section">
-        <h2 class="section-title">Cuộc sống</h2>
+        <h2 class="overline section-title">Cuộc sống</h2>
         <HabitTickList
           :habits="definitions.habits"
           :entries="entry.habits"
@@ -164,12 +162,11 @@ onMounted(refresh)
         />
       </section>
 
-      <Button
-        :label="hasEvening ? '🌙 Sửa check-in tối' : '🌙 Check-in tối'"
-        size="large"
-        fluid
-        :severity="hasEvening ? 'secondary' : 'primary'"
-        :outlined="hasEvening"
+      <UiButton
+        :label="hasEvening ? 'Sửa check-in tối' : 'Check-in tối →'"
+        size="lg"
+        block
+        :variant="hasEvening ? 'ghost' : 'primary'"
         @click="router.push('/checkin/evening')"
       />
     </template>
@@ -180,50 +177,53 @@ onMounted(refresh)
 .today {
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
-  padding: 1rem;
-  max-width: 640px;
-  margin: 0 auto;
+  gap: 1.5rem;
 }
 .today-header {
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   justify-content: space-between;
   gap: 1rem;
 }
+.date-block {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
 .date-title {
   margin: 0;
-  font-size: 1.4rem;
 }
-.date-sub {
+.overline {
   margin: 0;
-  font-size: 0.8rem;
-  color: var(--p-text-muted-color);
 }
 .section {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 0.6rem;
 }
 .section-title {
   margin: 0;
-  font-size: 1rem;
-  color: var(--p-text-muted-color);
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
 }
 .deferred-row {
-  border: 1px dashed var(--p-surface-300);
-  border-radius: 10px;
-  padding: 0.75rem;
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius);
+  padding: 0.75rem 0.9rem;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.6rem;
+  background: var(--surface);
 }
 .deferred-label {
   margin: 0;
   font-weight: 500;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+.deferred-date {
+  font-size: 0.75rem;
+  color: var(--text-faint);
 }
 .deferred-input {
   display: flex;
@@ -231,6 +231,7 @@ onMounted(refresh)
   gap: 0.5rem;
 }
 .muted {
-  color: var(--p-text-muted-color);
+  color: var(--text-muted);
+  font-size: 0.85rem;
 }
 </style>

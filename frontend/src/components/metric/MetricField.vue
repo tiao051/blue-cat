@@ -72,9 +72,10 @@ const update = (v: unknown) => emit('update:modelValue', v)
 .metric-label {
   font-size: 1.05rem;
   font-weight: 600;
+  letter-spacing: -0.005em;
 }
 .unknown {
-  color: var(--p-red-500, #ef4444);
+  color: var(--danger);
   font-size: 0.9rem;
 }
 </style>

@@ -1,8 +1,8 @@
 <script setup lang="ts">
-// Wizard full-screen: một bước một màn, thanh tiến trình vạch, tối ưu ngón cái (spec §9.1).
-// Steps derive từ definitions (lib/checkinSteps) — không hardcode câu hỏi nào.
+// Wizard check-in: một bước một màn, thanh tiến trình vạch, tối ưu ngón cái (spec §9.1).
+// Mobile full-screen; desktop thành panel giữa màn. Steps derive từ definitions.
 import { computed, reactive, ref } from 'vue'
-import Button from 'primevue/button'
+import UiButton from '@/components/ui/UiButton.vue'
 import type { CheckinStep } from '@/lib/checkinSteps'
 import type { MetricValueInput } from '@/api/types'
 import { isAnswered, toInput } from '@/lib/metricValues'
@@ -13,7 +13,6 @@ import MetricField from '@/components/metric/MetricField.vue'
 const props = defineProps<{
   steps: CheckinStep[]
   title: string
-  /** giá trị khởi tạo (sửa lại trong ngày / default lần trước cho time) */
   initial?: Record<string, unknown>
   submitting?: boolean
 }>()
@@ -39,7 +38,6 @@ const sleepTotal = computed(() => {
   return sleepHours(s, e)
 })
 
-/** Bước hiện tại đi tiếp được chưa: field bắt buộc phải có giá trị hoặc đã "để sau". */
 const canAdvance = computed(() =>
   step.value.defs.every((def) => {
     if (deferred.has(def.key)) return true
@@ -82,118 +80,147 @@ function finish() {
 </script>
 
 <template>
-  <div class="wizard">
-    <header class="wizard-header">
-      <button class="close" type="button" aria-label="Đóng" @click="emit('cancel')">×</button>
-      <div class="progress">
-        <div
-          v-for="(s, i) in steps"
-          :key="i"
-          class="bar"
-          :class="{ done: i < current, active: i === current }"
-        />
-      </div>
-      <span class="title">{{ title }}</span>
-    </header>
-
-    <main class="wizard-body">
-      <!-- Cặp ngủ: hai time picker + tổng số giờ tính tự động (spec §9.1) -->
-      <template v-if="step.kind === 'sleep'">
-        <div v-for="def in step.defs" :key="def.key" class="field-block">
-          <MetricField :def="def" v-model="raw[def.key]" />
+  <div class="wizard-backdrop">
+    <div class="wizard">
+      <header class="wizard-header">
+        <button class="close" type="button" aria-label="Đóng" @click="emit('cancel')">×</button>
+        <div class="progress">
+          <div
+            v-for="(s, i) in steps"
+            :key="i"
+            class="bar"
+            :class="{ done: i < current, active: i === current }"
+          />
         </div>
-        <p class="sleep-total" :class="{ empty: sleepTotal === null }">
-          {{ sleepTotal !== null ? `Ngủ ${sleepTotal} tiếng` : 'Chọn đủ hai mốc' }}
-        </p>
-      </template>
+        <span class="title overline">{{ title }}</span>
+      </header>
 
-      <template v-else>
-        <div v-for="def in step.defs" :key="def.key" class="field-block">
-          <MetricField :def="def" v-model="raw[def.key]" />
-          <div class="field-actions">
-            <Button
-              v-if="def.deferrableDays != null && !isAnswered(def, raw[def.key])"
-              label="Để sau"
-              severity="secondary"
-              text
-              @click="defer(def.key)"
-            />
-            <Button
-              v-if="def.validation?.required === false && step.defs.length === 1"
-              label="Bỏ qua"
-              severity="secondary"
-              text
-              @click="skip(def.key)"
-            />
+      <main class="wizard-body">
+        <!-- Cặp ngủ: hai time picker + tổng số giờ tính tự động (spec §9.1) -->
+        <template v-if="step.kind === 'sleep'">
+          <div v-for="def in step.defs" :key="def.key" class="field-block">
+            <MetricField :def="def" v-model="raw[def.key]" />
           </div>
-        </div>
-      </template>
-    </main>
+          <p class="sleep-total data" :class="{ empty: sleepTotal === null }">
+            {{ sleepTotal !== null ? `= ${sleepTotal} tiếng` : 'chọn đủ hai mốc' }}
+          </p>
+        </template>
 
-    <footer class="wizard-footer">
-      <Button v-if="current > 0" label="Quay lại" severity="secondary" outlined @click="back" />
-      <Button
-        :label="isLast ? 'Xong' : 'Tiếp tục'"
-        :disabled="!canAdvance || submitting"
-        :loading="submitting"
-        class="advance"
-        @click="next"
-      />
-    </footer>
+        <template v-else>
+          <div v-for="def in step.defs" :key="def.key" class="field-block">
+            <MetricField :def="def" v-model="raw[def.key]" />
+            <div class="field-actions">
+              <UiButton
+                v-if="def.deferrableDays != null && !isAnswered(def, raw[def.key])"
+                label="Để sau"
+                variant="subtle"
+                size="sm"
+                @click="defer(def.key)"
+              />
+              <UiButton
+                v-if="def.validation?.required === false && step.defs.length === 1"
+                label="Bỏ qua"
+                variant="subtle"
+                size="sm"
+                @click="skip(def.key)"
+              />
+            </div>
+          </div>
+        </template>
+      </main>
+
+      <footer class="wizard-footer">
+        <UiButton v-if="current > 0" label="Quay lại" variant="ghost" size="lg" @click="back" />
+        <UiButton
+          :label="isLast ? 'Xong' : 'Tiếp tục'"
+          :disabled="!canAdvance"
+          :loading="submitting"
+          size="lg"
+          class="advance"
+          @click="next"
+        />
+      </footer>
+    </div>
   </div>
 </template>
 
 <style scoped>
-.wizard {
+.wizard-backdrop {
   position: fixed;
   inset: 0;
+  z-index: 100;
+  background: var(--bg);
+  display: flex;
+  justify-content: center;
+}
+.wizard {
   display: flex;
   flex-direction: column;
-  background: var(--p-surface-0);
-  z-index: 100;
+  width: 100%;
+  background: var(--bg);
 }
+
+/* Desktop: panel giữa màn, có khung — không kéo dãn nút hết chiều ngang */
+@media (min-width: 900px) {
+  .wizard-backdrop {
+    align-items: center;
+    background: color-mix(in srgb, var(--bg) 80%, transparent);
+    backdrop-filter: blur(2px);
+  }
+  .wizard {
+    max-width: 520px;
+    max-height: min(720px, 90vh);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    background: var(--surface);
+  }
+}
+
 .wizard-header {
   display: flex;
   align-items: center;
   gap: 0.75rem;
   padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--border);
 }
 .close {
   border: none;
   background: none;
-  font-size: 1.75rem;
+  font-size: 1.6rem;
   line-height: 1;
-  color: var(--p-text-muted-color);
+  color: var(--text-muted);
   cursor: pointer;
   padding: 0.25rem 0.5rem;
+}
+.close:hover {
+  color: var(--text);
 }
 .progress {
   flex: 1;
   display: flex;
-  gap: 6px;
+  gap: 5px;
 }
 .bar {
   flex: 1;
-  height: 4px;
-  border-radius: 2px;
-  background: var(--p-surface-200);
+  height: 3px;
+  border-radius: 1.5px;
+  background: var(--surface-raised);
 }
 .bar.done {
-  background: var(--p-primary-color);
-  opacity: 0.5;
+  background: var(--accent);
+  opacity: 0.45;
 }
 .bar.active {
-  background: var(--p-primary-color);
+  background: var(--accent);
 }
 .title {
-  font-size: 0.85rem;
-  color: var(--p-text-muted-color);
   white-space: nowrap;
 }
 .wizard-body {
   flex: 1;
   overflow-y: auto;
-  padding: 1.5rem 1.25rem;
+  padding: 1.75rem 1.25rem;
   display: flex;
   flex-direction: column;
   gap: 1.75rem;
@@ -209,30 +236,23 @@ function finish() {
 }
 .sleep-total {
   text-align: center;
-  font-size: 1.15rem;
+  font-size: 1.2rem;
   font-weight: 600;
-  color: var(--p-primary-color);
+  color: var(--accent);
   margin: 0;
 }
 .sleep-total.empty {
-  color: var(--p-text-muted-color);
+  color: var(--text-faint);
   font-weight: 400;
+  font-size: 0.9rem;
 }
 .wizard-footer {
   display: flex;
   gap: 0.75rem;
   padding: 1rem 1.25rem calc(1rem + env(safe-area-inset-bottom));
+  border-top: 1px solid var(--border);
 }
 .advance {
   flex: 1;
-  min-height: 48px; /* ngón cái */
-}
-@media (prefers-color-scheme: dark) {
-  .wizard {
-    background: var(--p-surface-950);
-  }
-  .bar {
-    background: var(--p-surface-800);
-  }
 }
 </style>

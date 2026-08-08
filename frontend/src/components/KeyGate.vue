@@ -1,8 +1,8 @@
 <script setup lang="ts">
 // Màn nhập secret key lần đầu — nhập một lần, lưu localStorage (spec §10)
 import { ref } from 'vue'
-import Button from 'primevue/button'
-import Password from 'primevue/password'
+import UiButton from '@/components/ui/UiButton.vue'
+import UiInput from '@/components/ui/UiInput.vue'
 import { useSessionStore } from '@/stores/session'
 
 const session = useSessionStore()
@@ -16,10 +16,11 @@ function save() {
 <template>
   <div class="gate">
     <div class="gate-card">
-      <h1>Daily Tracker</h1>
-      <p class="muted">Nhập secret key để bắt đầu — chỉ cần một lần trên thiết bị này.</p>
-      <Password v-model="input" :feedback="false" toggle-mask fluid @keyup.enter="save" />
-      <Button label="Vào app" fluid :disabled="input.trim().length === 0" @click="save" />
+      <p class="overline">daily tracker</p>
+      <h1 class="gate-title">Nhập secret key</h1>
+      <p class="muted">Chỉ cần một lần trên thiết bị này.</p>
+      <UiInput v-model="input" type="password" mono placeholder="secret key" @enter="save" />
+      <UiButton label="Vào app" size="lg" block :disabled="input.trim().length === 0" @click="save" />
     </div>
   </div>
 </template>
@@ -34,18 +35,26 @@ function save() {
 }
 .gate-card {
   width: 100%;
-  max-width: 360px;
+  max-width: 340px;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 0.9rem;
+  padding: 1.75rem;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
 }
-.gate-card h1 {
+.gate-title {
   margin: 0;
-  text-align: center;
+  font-size: 1.25rem;
+}
+.overline {
+  margin: 0;
+  color: var(--accent);
 }
 .muted {
-  color: var(--p-text-muted-color);
-  text-align: center;
   margin: 0;
+  color: var(--text-muted);
+  font-size: 0.88rem;
 }
 </style>
