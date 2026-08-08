@@ -240,9 +240,10 @@ const tabs = [
     font-family: var(--font-ui);
   }
   .content-inner {
-    margin: 2rem;
+    margin: 2rem auto; /* centered in the content column */
     padding: 1.75rem 2rem;
     max-width: 720px;
+    width: calc(100% - 4rem);
   }
 }
 </style>

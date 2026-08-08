@@ -263,17 +263,20 @@ onMounted(refresh)
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
-  gap: 1rem;
+  gap: 0.5rem 1rem;
+  flex-wrap: wrap; /* narrow screens: the dayType select drops below instead of squeezing the title */
 }
 .date-block {
   display: flex;
   flex-direction: column;
   gap: 0.2rem;
+  min-width: 0;
 }
 .date-title {
   margin: 0;
-  font-size: 1.4rem;
+  font-size: clamp(1rem, 4.2vw, 1.4rem); /* pixel font is wide — scale with the viewport */
   font-weight: 700;
+  white-space: nowrap;
 }
 .overline {
   margin: 0;
