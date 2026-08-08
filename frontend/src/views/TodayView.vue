@@ -20,7 +20,7 @@ import type {
   MetricDefinition,
   TodayPayload,
 } from '@/api/types'
-import { formatDisplay, logicalToday } from '@/lib/dates'
+import { formatDisplay, isoWeekCode, logicalToday } from '@/lib/dates'
 import { toInput } from '@/lib/metricValues'
 import { useDefinitionsStore } from '@/stores/definitions'
 import HabitTickList from '@/components/HabitTickList.vue'
@@ -106,7 +106,7 @@ onMounted(refresh)
   <div class="today">
     <header class="today-header">
       <div class="date-block">
-        <p class="overline">{{ today }}</p>
+        <p class="overline">{{ today }} · {{ isoWeekCode(today).split('-')[1] }}</p>
         <h1 class="date-title">{{ formatDisplay(today) }}</h1>
       </div>
       <UiSelect
@@ -118,20 +118,18 @@ onMounted(refresh)
     </header>
 
     <UiMessage v-if="error" severity="error">{{ error }}</UiMessage>
-    <p v-if="loading" class="muted data">đang tải…</p>
+    <p v-if="loading" class="muted data blink-cursor">đang tải</p>
 
     <template v-if="entry && !loading">
-      <UiButton
-        v-if="needsMorning"
-        label="Check-in sáng →"
-        size="lg"
-        block
-        @click="router.push('/checkin/morning')"
-      />
+      <button v-if="needsMorning" type="button" class="cta cta-primary" @click="router.push('/checkin/morning')">
+        <span class="cta-tag data">sáng</span>
+        <span class="cta-label">Check-in sáng</span>
+        <span class="cta-arrow" aria-hidden="true">→</span>
+      </button>
 
       <!-- Field để sau: ghi rõ ngày nó thuộc về (spec §9.2) -->
       <section v-if="deferred.length > 0" class="section">
-        <h2 class="overline section-title">Còn thiếu</h2>
+        <h2 class="overline section-title rule-title">Còn thiếu</h2>
         <div
           v-for="field in deferred"
           :key="`${field.key}:${field.belongsToDate}`"
@@ -153,7 +151,7 @@ onMounted(refresh)
       </section>
 
       <section class="section">
-        <h2 class="overline section-title">Cuộc sống</h2>
+        <h2 class="overline section-title rule-title">Cuộc sống</h2>
         <HabitTickList
           :habits="definitions.habits"
           :entries="entry.habits"
@@ -162,13 +160,16 @@ onMounted(refresh)
         />
       </section>
 
-      <UiButton
-        :label="hasEvening ? 'Sửa check-in tối' : 'Check-in tối →'"
-        size="lg"
-        block
-        :variant="hasEvening ? 'ghost' : 'primary'"
+      <button
+        type="button"
+        class="cta"
+        :class="hasEvening ? 'cta-ghost' : 'cta-primary'"
         @click="router.push('/checkin/evening')"
-      />
+      >
+        <span class="cta-tag data">tối</span>
+        <span class="cta-label">{{ hasEvening ? 'Sửa check-in tối' : 'Check-in tối' }}</span>
+        <span class="cta-arrow" aria-hidden="true">→</span>
+      </button>
     </template>
   </div>
 </template>
@@ -188,13 +189,72 @@ onMounted(refresh)
 .date-block {
   display: flex;
   flex-direction: column;
-  gap: 0.15rem;
+  gap: 0.2rem;
 }
 .date-title {
   margin: 0;
+  font-size: 1.55rem;
+  letter-spacing: -0.015em;
 }
 .overline {
   margin: 0;
+  color: var(--accent);
+}
+
+/* CTA check-in: panel row — tag mono, mũi tên trượt khi hover */
+.cta {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-height: 52px;
+  padding: 0 1rem;
+  border-radius: var(--radius);
+  border: 1px solid transparent;
+  font-family: var(--font-ui);
+  font-size: 0.98rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 120ms, border-color 120ms;
+}
+.cta-tag {
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 0.15rem 0.45rem;
+  border-radius: 3px;
+}
+.cta-label {
+  flex: 1;
+  text-align: left;
+}
+.cta-arrow {
+  font-family: var(--font-data);
+  transition: transform 140ms ease-out;
+}
+.cta:hover .cta-arrow {
+  transform: translateX(4px);
+}
+.cta-primary {
+  background: var(--accent);
+  color: var(--on-accent);
+}
+.cta-primary:hover {
+  background: var(--accent-strong);
+}
+.cta-primary .cta-tag {
+  background: color-mix(in srgb, var(--on-accent) 18%, transparent);
+}
+.cta-ghost {
+  background: var(--surface);
+  border-color: var(--border-strong);
+  color: var(--text);
+}
+.cta-ghost:hover {
+  border-color: var(--accent);
+}
+.cta-ghost .cta-tag {
+  background: var(--surface-raised);
+  color: var(--text-muted);
 }
 .section {
   display: flex;

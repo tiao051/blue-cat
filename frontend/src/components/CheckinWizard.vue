@@ -93,6 +93,7 @@ function finish() {
           />
         </div>
         <span class="title overline">{{ title }}</span>
+        <span class="step-counter data">{{ String(current + 1).padStart(2, '0') }}/{{ String(steps.length).padStart(2, '0') }}</span>
       </header>
 
       <main class="wizard-body">
@@ -215,6 +216,11 @@ function finish() {
   background: var(--accent);
 }
 .title {
+  white-space: nowrap;
+}
+.step-counter {
+  font-size: 0.7rem;
+  color: var(--accent);
   white-space: nowrap;
 }
 .wizard-body {

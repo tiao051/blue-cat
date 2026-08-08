@@ -110,9 +110,24 @@ const tabs = [
   padding: 0.55rem 0 0.5rem;
   text-decoration: none;
   color: var(--text-muted);
+  position: relative;
 }
 .nav-item.active {
   color: var(--accent);
+}
+/* kim chỉ: vạch amber phía trên tab active (mobile) */
+.nav-item::before {
+  content: '';
+  position: absolute;
+  top: -1px;
+  left: 25%;
+  right: 25%;
+  height: 2px;
+  background: transparent;
+  transition: background 120ms;
+}
+.nav-item.active::before {
+  background: var(--accent);
 }
 .nav-icon {
   width: 21px;
@@ -169,6 +184,15 @@ const tabs = [
   .nav-item.active {
     color: var(--accent);
     background: var(--accent-dim);
+  }
+  /* kim chỉ desktop: vạch dọc bên trái item active */
+  .nav-item::before {
+    top: 20%;
+    bottom: 20%;
+    left: -0.75rem;
+    right: auto;
+    width: 2px;
+    height: auto;
   }
   .nav-icon {
     width: 19px;

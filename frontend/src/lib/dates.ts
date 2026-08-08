@@ -38,6 +38,21 @@ export function sleepHours(start: string, end: string): number | null {
   return Math.round((minutes / 60) * 100) / 100
 }
 
+/** Mã tuần ISO 8601 (tuần bắt đầu thứ Hai) — vd "2026-W32", khớp backend. */
+export function isoWeekCode(date: string): string {
+  const d = new Date(`${date}T12:00:00`)
+  // dời về thứ Năm của tuần ISO hiện tại
+  const day = (d.getDay() + 6) % 7 // 0 = thứ Hai
+  d.setDate(d.getDate() - day + 3)
+  const isoYear = d.getFullYear()
+  const jan4 = new Date(isoYear, 0, 4)
+  const jan4Day = (jan4.getDay() + 6) % 7
+  const week1Thu = new Date(jan4)
+  week1Thu.setDate(jan4.getDate() - jan4Day + 3)
+  const week = 1 + Math.round((d.getTime() - week1Thu.getTime()) / (7 * 24 * 3600 * 1000))
+  return `${isoYear}-W${String(week).padStart(2, '0')}`
+}
+
 const WEEKDAYS = ['Chủ nhật', 'Thứ hai', 'Thứ ba', 'Thứ tư', 'Thứ năm', 'Thứ sáu', 'Thứ bảy']
 
 export function formatDisplay(date: string): string {

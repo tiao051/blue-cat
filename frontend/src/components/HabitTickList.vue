@@ -202,6 +202,17 @@ function setQuality(habit: Habit, quality: string | number | null) {
   border-color: var(--accent);
   color: var(--on-accent);
 }
+/* animation vẽ nét tick — micro-interaction kiểu Things */
+.done .box svg path {
+  stroke-dasharray: 20;
+  stroke-dashoffset: 0;
+  animation: draw-check 220ms ease-out;
+}
+@keyframes draw-check {
+  from {
+    stroke-dashoffset: 20;
+  }
+}
 .not-done .box {
   color: var(--text-faint);
   border-color: var(--border-strong);

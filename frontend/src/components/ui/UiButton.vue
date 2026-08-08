@@ -45,6 +45,9 @@ const emit = defineEmits<{ click: [] }>()
   opacity: 0.45;
   cursor: not-allowed;
 }
+.btn:not(:disabled):active {
+  transform: translateY(1px);
+}
 .block {
   width: 100%;
 }

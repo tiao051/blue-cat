@@ -98,21 +98,24 @@ function onPointerUp() {
 }
 .scale-track {
   display: flex;
+  align-items: flex-end;
   gap: 3px;
-  height: 56px;
+  height: 64px;
   cursor: pointer;
   user-select: none;
   touch-action: none;
-  padding: 4px;
+  padding: 6px;
   border: 1px solid var(--border);
   border-radius: var(--radius);
   background: var(--surface);
 }
+/* gauge: vạch đo mọc cao dần từ đáy như thang mực */
 .scale-cell {
   flex: 1;
-  border-radius: 2px;
+  height: calc(38% + 62% * var(--cell-strength));
+  border-radius: 2px 2px 1px 1px;
   background: var(--surface-raised);
-  transition: background 60ms;
+  transition: background 60ms, height 120ms ease-out;
 }
 .scale-cell.active {
   background: color-mix(
