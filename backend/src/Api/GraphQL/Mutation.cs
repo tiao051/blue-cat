@@ -35,4 +35,21 @@ public class Mutation
         string date, DayType dayType,
         DayLifecycleService lifecycle, CancellationToken ct) =>
         DailyEntryDto.From(await lifecycle.SetDayTypeAsync(date, dayType.ToDomain(), ct));
+
+    // ---- Việc vụn (spec §6 tasks — kéo M2 lên sớm) ----
+
+    public async Task<TaskDto> AddTask(
+        string title, string plannedDate, string clientDate,
+        TaskService tasks, CancellationToken ct) =>
+        TaskDto.From(await tasks.AddAsync(title, plannedDate, clientDate, ct));
+
+    public async Task<TaskDto> SetTaskDone(
+        string id, bool done, string clientDate,
+        TaskService tasks, CancellationToken ct) =>
+        TaskDto.From(await tasks.SetDoneAsync(id, done, clientDate, ct));
+
+    public async Task<TaskDto> DropTask(
+        string id, string clientDate,
+        TaskService tasks, CancellationToken ct) =>
+        TaskDto.From(await tasks.DropAsync(id, clientDate, ct));
 }

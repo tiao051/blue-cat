@@ -43,13 +43,27 @@ public class Query
     }
 
     /// <summary>Màn Hôm nay: entry của date + các field để-sau còn hạn (spec §9.2).</summary>
-    public async Task<TodayPayload> GetToday(string date, DayLifecycleService lifecycle, CancellationToken ct)
+    public async Task<TodayPayload> GetToday(
+        string date, DayLifecycleService lifecycle, TaskService tasks, CancellationToken ct)
     {
         await lifecycle.EnsureClosedThroughAsync(date, ct);
         var entry = await lifecycle.GetOrSynthesizeAsync(date, date, ct);
         var deferred = await lifecycle.GetDeferredAsync(date, ct);
-        return new TodayPayload(DailyEntryDto.From(entry), deferred.Select(DeferredFieldDto.From).ToList());
+
+        var dto = DailyEntryDto.From(entry);
+        if (entry.Status == DayStatuses.Open)
+        {
+            // Ngày đang mở: tử số + việc-thêm-sau tính live từ tasks (đóng sổ mới chốt cứng)
+            var (done, addedLater) = await lifecycle.QuickCountersAsync(entry, ct);
+            dto = dto with { QuickDone = done, QuickAddedLater = addedLater };
+        }
+
+        return new TodayPayload(dto, deferred.Select(DeferredFieldDto.From).ToList());
     }
+
+    /// <summary>Việc trong khoảng ngày (hôm qua/hôm nay/ngày mai trên màn Hôm nay).</summary>
+    public async Task<List<TaskDto>> GetTasks(string from, string to, TaskService tasks, CancellationToken ct) =>
+        (await tasks.GetRangeAsync(from, to, ct)).Select(TaskDto.From).ToList();
 
     /// <summary>Một dòng mục tiêu năm read-only (R12, v1).</summary>
     public async Task<GoalDto?> GetYearGoal(MongoContext ctx, CancellationToken ct)

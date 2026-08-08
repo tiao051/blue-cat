@@ -13,6 +13,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddSingleton<MongoContext>();
 builder.Services.AddSingleton<MetricValidationService>();
 builder.Services.AddSingleton<DayLifecycleService>();
+builder.Services.AddSingleton<TaskService>();
 
 var allowedOrigins = (builder.Configuration["ALLOWED_ORIGINS"] ?? "")
     .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);

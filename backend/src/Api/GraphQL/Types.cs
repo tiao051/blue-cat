@@ -133,6 +133,15 @@ public sealed record GoalDto(string Title, string Scope, string? TargetDate)
     public static GoalDto From(Goal g) => new(g.Title, g.Scope, g.TargetDate);
 }
 
+public sealed record TaskDto(
+  string Id, string Title, string Category, string Kind, string Scope,
+  string? PlannedDate, string Status, DateTime CreatedAt, DateTime? DoneAt)
+{
+    public static TaskDto From(TaskItem t) => new(
+        t.Id.ToString(), t.Title, t.Category, t.Kind, t.Scope,
+        t.PlannedDate, t.Status, t.CreatedAt, t.DoneAt);
+}
+
 // ---- Inputs ----
 
 public sealed record MetricValueInput(string Key, double? Number, string? Text, string? Time, List<string>? Options)

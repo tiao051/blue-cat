@@ -92,6 +92,18 @@ export interface TodayPayload {
   deferred: DeferredField[]
 }
 
+export interface Task {
+  id: string
+  title: string
+  category: 'personal' | 'work'
+  kind: 'quick' | 'ongoing'
+  scope: string
+  plannedDate?: string | null
+  status: 'todo' | 'in_progress' | 'done' | 'dropped'
+  createdAt: string
+  doneAt?: string | null
+}
+
 export interface Goal {
   title: string
   scope: string

@@ -88,10 +88,37 @@ public sealed class DayLifecycleService(MongoContext ctx, MetricValidationServic
 
     private async Task FinalizeAsync(DailyEntry entry, CancellationToken ct)
     {
+        // Chốt cứng tử số + việc-thêm-sau vào document lúc đóng sổ —
+        // ngày mở thì tính live, ngày đóng thì document tự đứng một mình cho Phân tích (M4)
+        var (done, addedLater) = await QuickCountersAsync(entry, ct);
+        entry.QuickDone = done;
+        entry.QuickAddedLater = addedLater;
+
         entry.Status = ResolveClosedStatus(entry);
         entry.ClosedAt = DateTime.UtcNow;
         entry.UpdatedAt = DateTime.UtcNow;
         await ctx.DailyEntries.ReplaceOneAsync(e => e.Date == entry.Date, entry, cancellationToken: ct);
+    }
+
+    /// <summary>Tử số + việc-thêm-sau của một ngày, tính live từ collection tasks (spec §6).</summary>
+    public async Task<(int Done, int AddedLater)> QuickCountersAsync(DailyEntry entry, CancellationToken ct = default)
+    {
+        var baseFilter = Builders<TaskItem>.Filter.Eq(t => t.Category, "personal")
+                         & Builders<TaskItem>.Filter.Eq(t => t.Kind, "quick")
+                         & Builders<TaskItem>.Filter.Eq(t => t.PlannedDate, entry.Date)
+                         & Builders<TaskItem>.Filter.Ne(t => t.Status, "dropped");
+
+        var done = (int)await ctx.Tasks.CountDocumentsAsync(
+            baseFilter & Builders<TaskItem>.Filter.Eq(t => t.Status, "done"), cancellationToken: ct);
+
+        var addedLater = 0;
+        if (entry.MorningCheckinAt is DateTime lockAt)
+        {
+            addedLater = (int)await ctx.Tasks.CountDocumentsAsync(
+                baseFilter & Builders<TaskItem>.Filter.Gt(t => t.CreatedAt, lockAt), cancellationToken: ct);
+        }
+
+        return (done, addedLater);
     }
 
     /// <summary>

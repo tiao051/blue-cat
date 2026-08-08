@@ -73,6 +73,7 @@ Sau vài tháng, nhìn lại toàn bộ để tự nhận ra lịch trình nào 
 | R24 | Attention chọn được nhiều mục — **thay thế R19** |
 | R25 | Màn hình mobile không được dày đặc thông tin |
 | R26 | Việc cuộc sống và việc công ty phải tách khỏi nhau trên màn hình |
+| R27 | Màn Hôm nay có nhìn lại hôm qua (read-only) và plan việc cho ngày mai — thêm ở v3.2 khi kéo phần task của M2 lên M1 |
 
 ---
 
@@ -331,6 +332,8 @@ Header: ngày và `dayType` ở góc phải, chạm để đổi. Mặc định 
 - Lưới icon habit, 4 cột. Ô luôn hiện icon và `shortLabel`. Giá trị hiện ở góc trên phải dạng nhãn nhỏ, **không thay thế tên habit**.
 - Bên dưới là việc cá nhân trong ngày, mỗi việc một dòng, kèm dòng "Thêm việc".
 - Field để sau chưa điền hiện thành dòng thường, ghi rõ ngày nó thuộc về.
+
+**Ba vùng thời gian (R27, thêm v3.2):** trên cùng là khối "Hôm qua" read-only (trạng thái sổ, việc đã/chưa làm, habit đã tick — không sửa được, R18 giữ nguyên); dưới cùng trước CTA tối là khối "Ngày mai" để plan trước việc (R3: tối lên plan cho mai). Việc thêm cho ngày mai vào mẫu số của ngày mai lúc check-in sáng hôm sau.
 
 **Vùng Công việc**
 - Khối riêng trên nền xám nhạt, chữ nhạt hơn một bậc.
