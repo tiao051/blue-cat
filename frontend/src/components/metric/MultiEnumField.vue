@@ -1,6 +1,6 @@
 <script setup lang="ts">
-// Chip chọn nhiều, CHẶN CỨNG maxSelect: đủ số thì chip chưa chọn bị disable —
-// giữ chữ "chủ yếu" của attention (spec §5 + Phụ lục A, checklist M1).
+// Multi-choice chips with a HARD maxSelect block: at the limit, unselected chips disable —
+// keeps attention's "mainly" meaningful (spec §5 + Appendix A, M1 checklist).
 import { computed } from 'vue'
 import type { MetricDefinition } from '@/api/types'
 
@@ -34,7 +34,7 @@ function toggle(value: string) {
     >
       {{ opt.label }}
     </button>
-    <p v-if="def.maxSelect" class="hint data">tối đa {{ def.maxSelect }}</p>
+    <p v-if="def.maxSelect" class="hint data">pick up to {{ def.maxSelect }}</p>
   </div>
 </template>
 

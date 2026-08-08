@@ -1,5 +1,5 @@
 <script setup lang="ts">
-// Native select styled — mobile mở picker OS, không dropdown tự chế
+// Styled native select — mobile gets the OS picker, no homemade dropdown
 export interface SelectOption {
   label: string
   value: string | number

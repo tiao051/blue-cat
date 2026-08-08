@@ -1,6 +1,6 @@
 <script setup lang="ts">
-// Time picker: input time native — mobile mở wheel của OS, ít ma sát nhất (nguyên tắc 1).
-// Default = giá trị lần trước do parent truyền vào (spec §5 "nhớ giá trị lần trước").
+// Time picker: native time input — mobile gets the OS wheel, lowest friction (principle 1).
+// Default = last recorded value, passed in by the parent (spec §5 "remember last value").
 const model = defineModel<string | null>({ default: null })
 
 function onInput(e: Event) {
@@ -28,7 +28,7 @@ function onInput(e: Event) {
   border-color: var(--accent);
   outline: none;
 }
-/* icon lịch của webkit tối màu khó thấy trên nền tối */
+/* webkit's calendar icon is dark and hard to see on a dark ground */
 @media (prefers-color-scheme: dark) {
   .time-input::-webkit-calendar-picker-indicator {
     filter: invert(0.8);

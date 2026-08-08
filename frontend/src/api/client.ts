@@ -16,7 +16,7 @@ export function clearSecretKey() {
   localStorage.removeItem(STORAGE_KEY)
 }
 
-/** Gắn X-Secret-Key vào mọi request (spec §10 auth). */
+/** Attaches X-Secret-Key to every request (spec §10 auth). */
 const authPlugin: ClientPlugin = ({ opContext }) => {
   opContext.headers['X-Secret-Key'] = getSecretKey()
 }
@@ -26,7 +26,7 @@ export const client = createClient({
   use: [authPlugin, fetchPlugin()],
 })
 
-/** Gọi trực tiếp ngoài component (stores, wizard submit). Throw message lỗi đầu tiên nếu có. */
+/** Direct calls outside components (stores, wizard submits). Throws the first error message if any. */
 export async function execute<TData>(
   query: string,
   variables?: Record<string, unknown>,

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-// Check-in tối 3 bước (spec §9.3): thang gộp một màn theo visibleWhen(dayType), chip attention, note.
+// 3-step evening check-in (spec §9.3): scales grouped per visibleWhen(dayType), attention chips, note.
 import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { execute, executeMutation } from '@/api/client'
@@ -23,14 +23,14 @@ const submitting = ref(false)
 
 onMounted(async () => {
   try {
-    // dayType của hôm nay quyết định bộ thang (ngày nghỉ +2, ngày ốm +1 — spec v3.2)
+    // today's dayType decides the scale set (days off +2, sick days +1 — spec v3.2)
     const todayData = await execute<{ today: TodayPayload }>(TODAY_QUERY, { date: today })
     const entry = todayData.today.entry
 
     const defs = await definitions.fetchDefinitions('EVENING', entry.dayType)
     steps.value = deriveEveningSteps(defs)
 
-    // Sửa trong ngày: điền lại giá trị đã có (spec v3.2 — ngày chưa đóng sửa được)
+    // Same-day edits: pre-fill existing values (spec v3.2 — editable until the day closes)
     const init: Record<string, unknown> = {}
     for (const def of defs) {
       const raw = toRaw(def, entry.values.find((v) => v.key === def.key))
@@ -62,7 +62,7 @@ async function onFinish(values: MetricValueInput[], _deferredKeys: string[]) {
   <CheckinWizard
     v-if="steps"
     :steps="steps"
-    title="Check-in tối"
+    title="Evening check-in"
     :initial="initial"
     :submitting="submitting"
     @finish="onFinish"

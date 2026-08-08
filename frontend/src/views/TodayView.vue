@@ -1,6 +1,6 @@
 <script setup lang="ts">
-// Màn Hôm nay — ba vùng thời gian: Hôm qua (nhìn lại) · Hôm nay (làm) · Ngày mai (plan trước).
-// R3: sáng lên plan · trong ngày tick dần · tối review + lên plan cho mai.
+// The Today screen — three time zones: Yesterday (look back) · Today (do) · Tomorrow (plan ahead).
+// R3: plan in the morning · tick through the day · review at night + plan for tomorrow.
 import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import UiButton from '@/components/ui/UiButton.vue'
@@ -52,16 +52,16 @@ const error = ref('')
 const loading = ref(true)
 
 const dayTypeOptions: { label: string; value: DayType }[] = [
-  { label: 'ngày làm', value: 'WORKDAY' },
-  { label: 'cuối tuần', value: 'WEEKEND' },
-  { label: 'nghỉ phép', value: 'DAYOFF' },
-  { label: 'ốm', value: 'SICK' },
+  { label: 'workday', value: 'WORKDAY' },
+  { label: 'weekend', value: 'WEEKEND' },
+  { label: 'day off', value: 'DAYOFF' },
+  { label: 'sick', value: 'SICK' },
 ]
 
 const needsMorning = computed(() => !!entry.value && !entry.value.morningCheckinAt)
 const hasEvening = computed(() => !!entry.value?.eveningCheckinAt)
 
-// v1 chỉ hiện việc cá nhân — việc công ty tách riêng ở M2 (R26)
+// v1 shows personal tasks only — company work gets its own block in M2 (R26)
 const personal = (list: Task[]) => list.filter((t) => t.category === 'personal')
 const yesterdayTasks = computed(() => personal(tasks.value).filter((t) => t.plannedDate === yesterday))
 const todayTasks = computed(() => personal(tasks.value).filter((t) => t.plannedDate === today))
@@ -159,10 +159,10 @@ onMounted(refresh)
     </header>
 
     <UiMessage v-if="error" severity="error">{{ error }}</UiMessage>
-    <p v-if="loading" class="muted data blink-cursor">đang tải</p>
+    <p v-if="loading" class="muted data blink-cursor">loading</p>
 
     <template v-if="entry && !loading">
-      <!-- HÔM QUA — nhìn lại, không sửa được -->
+      <!-- YESTERDAY — look back, never editable -->
       <YesterdayRecap
         :date="yesterday"
         :entry="yesterdayEntry"
@@ -171,14 +171,14 @@ onMounted(refresh)
       />
 
       <button v-if="needsMorning" type="button" class="cta cta-primary" @click="router.push('/checkin/morning')">
-        <span class="cta-tag data">sáng</span>
-        <span class="cta-label">Check-in sáng</span>
+        <span class="cta-tag data">morning</span>
+        <span class="cta-label">Morning check-in</span>
         <span class="cta-arrow" aria-hidden="true">→</span>
       </button>
 
-      <!-- Field để sau: ghi rõ ngày nó thuộc về (spec §9.2) -->
+      <!-- Deferred fields: labeled with their owning date (spec §9.2) -->
       <section v-if="deferred.length > 0" class="section">
-        <h2 class="overline section-title rule-title">Còn thiếu</h2>
+        <h2 class="overline section-title rule-title">Still missing</h2>
         <div
           v-for="field in deferred"
           :key="`${field.key}:${field.belongsToDate}`"
@@ -194,22 +194,22 @@ onMounted(refresh)
               :show-label="false"
               v-model="deferredRaw[field.key]"
             />
-            <UiButton label="Lưu" size="sm" @click="submitDeferred(field)" />
+            <UiButton label="Save" size="sm" @click="submitDeferred(field)" />
           </div>
         </div>
       </section>
 
-      <!-- HÔM NAY — việc + thói quen -->
+      <!-- TODAY — tasks + habits -->
       <section class="section">
         <h2 class="overline section-title rule-title">
-          Việc hôm nay
+          Today's tasks
           <span v-if="quickRatio" class="ratio data">{{ quickRatio }}</span>
         </h2>
         <TaskList
           :tasks="todayTasks"
           addable
           :readonly="entry.status !== 'OPEN'"
-          add-placeholder="Thêm việc cho hôm nay…"
+          add-placeholder="Add a task for today…"
           @add="addTask(today)($event)"
           @toggle="toggleTask"
           @drop="dropTask"
@@ -217,7 +217,7 @@ onMounted(refresh)
       </section>
 
       <section class="section">
-        <h2 class="overline section-title rule-title">Thói quen</h2>
+        <h2 class="overline section-title rule-title">Habits</h2>
         <HabitTickList
           :habits="definitions.habits"
           :entries="entry.habits"
@@ -226,13 +226,13 @@ onMounted(refresh)
         />
       </section>
 
-      <!-- NGÀY MAI — plan trước (R3: tối lên plan cho mai) -->
+      <!-- TOMORROW — plan ahead (R3: plan for tomorrow at night) -->
       <section class="section">
-        <h2 class="overline section-title rule-title">Ngày mai <span class="ratio data">{{ tomorrow }}</span></h2>
+        <h2 class="overline section-title rule-title">Tomorrow <span class="ratio data">{{ tomorrow }}</span></h2>
         <TaskList
           :tasks="tomorrowTasks"
           addable
-          add-placeholder="Plan việc cho ngày mai…"
+          add-placeholder="Plan something for tomorrow…"
           @add="addTask(tomorrow)($event)"
           @toggle="toggleTask"
           @drop="dropTask"
@@ -245,8 +245,8 @@ onMounted(refresh)
         :class="hasEvening ? 'cta-ghost' : 'cta-primary'"
         @click="router.push('/checkin/evening')"
       >
-        <span class="cta-tag data">tối</span>
-        <span class="cta-label">{{ hasEvening ? 'Sửa check-in tối' : 'Check-in tối' }}</span>
+        <span class="cta-tag data">evening</span>
+        <span class="cta-label">{{ hasEvening ? 'Edit evening check-in' : 'Evening check-in' }}</span>
         <span class="cta-arrow" aria-hidden="true">→</span>
       </button>
     </template>
@@ -293,7 +293,7 @@ onMounted(refresh)
   text-transform: none;
 }
 
-/* CTA check-in: panel row — tag mono, mũi tên trượt khi hover */
+/* Check-in CTA: panel row — mono tag, arrow slides on hover */
 .cta {
   display: flex;
   align-items: center;

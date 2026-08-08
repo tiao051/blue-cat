@@ -2,17 +2,18 @@ import type { MetricDefinition } from '@/api/types'
 import { METRIC_KEYS } from '@/lib/metricKeys'
 
 /**
- * Một bước của wizard check-in. Step derive từ definitions, KHÔNG hardcode —
- * insert biến mới vào DB là form tự mọc thêm bước (spec §5, checklist M1).
+ * One wizard step. Steps are derived from definitions, NOT hardcoded —
+ * inserting a new metric into the DB makes the form grow a step (spec §5, M1 checklist).
  */
 export interface CheckinStep {
-  /** 'sleep' = cặp sleep_start + sleep_end gộp màn kèm tổng giờ (ngoại lệ có chủ đích duy nhất) */
+  /** 'sleep' = the sleep_start + sleep_end pair on one screen with the computed total (the only deliberate exception) */
   kind: 'sleep' | 'fields'
   defs: MetricDefinition[]
 }
 
 /**
- * Sáng: cặp ngủ thành 1 bước, mỗi biến còn lại 1 bước riêng (một câu hỏi một màn — §9.1).
+ * Morning: the sleep pair becomes one step, every remaining metric gets its own step
+ * (one question per screen — §9.1).
  */
 export function deriveMorningSteps(defs: MetricDefinition[]): CheckinStep[] {
   const sorted = [...defs].sort((a, b) => a.order - b.order)
@@ -28,8 +29,8 @@ export function deriveMorningSteps(defs: MetricDefinition[]): CheckinStep[] {
 }
 
 /**
- * Tối: mọi thang gộp 1 màn (3 ngày làm / 5 ngày nghỉ / 4 ngày ốm — tự đúng theo visibleWhen §9.3),
- * sau đó mỗi biến không-phải-thang 1 bước.
+ * Evening: all scales grouped on one screen (3 workday / 5 day-off / 4 sick — falls out of
+ * visibleWhen automatically, §9.3), then each non-scale metric gets its own step.
  */
 export function deriveEveningSteps(defs: MetricDefinition[]): CheckinStep[] {
   const sorted = [...defs].sort((a, b) => a.order - b.order)

@@ -5,7 +5,7 @@ using DailyTracker.Api.Domain;
 using DailyTracker.Api.GraphQL;
 using DailyTracker.Api.Migrations;
 
-// .env chỉ dùng local dev — env vars thật (compose/systemd) luôn thắng
+// .env is local-dev only — real env vars (compose/systemd) always win
 EnvFile.Load(System.IO.Path.Combine(Directory.GetCurrentDirectory(), ".env"));
 
 var builder = WebApplication.CreateBuilder(args);
@@ -32,11 +32,11 @@ var app = builder.Build();
 var mongo = app.Services.GetRequiredService<MongoContext>();
 var logger = app.Services.GetRequiredService<ILogger<Program>>();
 
-// Migration chạy lúc startup; `dotnet run -- migrate` thì chạy xong thoát luôn
+// Migrations run at startup; `dotnet run -- migrate` runs them and exits
 await MigrationRunner.RunAsync(mongo.Database, logger);
 if (args.Contains("migrate"))
 {
-    logger.LogInformation("Chế độ migrate: xong, thoát.");
+    logger.LogInformation("Migrate mode: done, exiting.");
     return;
 }
 

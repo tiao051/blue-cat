@@ -2,14 +2,14 @@ using DailyTracker.Api.Domain;
 
 namespace DailyTracker.Api.GraphQL;
 
-// ---- Enums (serialize thành MORNING, NOT_DONE... theo convention HotChocolate) ----
+// ---- Enums (serialized as MORNING, NOT_DONE... per HotChocolate convention) ----
 
 public enum Phase { Morning, Evening, Anytime }
 public enum DayType { Workday, Weekend, Dayoff, Sick }
 public enum DayStatus { Open, Closed, Partial, Missed }
 public enum HabitState { Done, NotDone, NoData }
 
-/// <summary>Map enum GraphQL ↔ string constant trong domain/BSON (spec dùng snake_case nguyên văn).</summary>
+/// <summary>Maps GraphQL enums ↔ domain/BSON string constants (spec uses snake_case verbatim).</summary>
 public static class GqlMap
 {
     public static string ToDomain(this Phase p) => p switch
@@ -125,7 +125,7 @@ public sealed record DeferredFieldDto(string Key, string Label, string BelongsTo
         new(d.Key, d.Label, d.BelongsToDate, d.LastWritableDate);
 }
 
-/// <summary>Màn Hôm nay: entry + các field để-sau đang chờ.</summary>
+/// <summary>The Today screen: entry + pending deferred fields.</summary>
 public sealed record TodayPayload(DailyEntryDto Entry, List<DeferredFieldDto> Deferred);
 
 public sealed record GoalDto(string Title, string Scope, string? TargetDate)

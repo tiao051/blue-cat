@@ -4,7 +4,7 @@ using MongoDB.Driver;
 
 namespace DailyTracker.Api.Migrations;
 
-/// <summary>6 collection (spec §6) + unique index. Checklist M0 mục 2.</summary>
+/// <summary>6 collections (spec §6) + unique indexes. M0 checklist item 2.</summary>
 public sealed class M0001_CollectionsAndIndexes : IMigration
 {
     public string Id => "M0001_CollectionsAndIndexes";
@@ -15,7 +15,7 @@ public sealed class M0001_CollectionsAndIndexes : IMigration
         foreach (var name in CollectionNames.All.Where(n => !existing.Contains(n)))
             await db.CreateCollectionAsync(name, cancellationToken: ct);
 
-        // daily_entries: ngày là khoá duy nhất
+        // daily_entries: the date is the unique key
         await db.GetCollection<DailyEntry>(CollectionNames.DailyEntries).Indexes.CreateOneAsync(
             new CreateIndexModel<DailyEntry>(
                 Builders<DailyEntry>.IndexKeys.Ascending(e => e.Date),

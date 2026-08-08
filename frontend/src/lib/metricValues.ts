@@ -1,6 +1,6 @@
 import type { MetricDefinition, MetricValue, MetricValueInput } from '@/api/types'
 
-/** Raw value của widget → MetricValueInput đúng slot theo type (spec §10 typed slots). */
+/** Raw widget value → MetricValueInput with the right slot for its type (spec §10 typed slots). */
 export function toInput(def: MetricDefinition, raw: unknown): MetricValueInput | null {
   if (raw === null || raw === undefined) return null
 
@@ -23,7 +23,7 @@ export function toInput(def: MetricDefinition, raw: unknown): MetricValueInput |
   }
 }
 
-/** MetricValue từ server → raw value cho widget (để sửa lại trong ngày). */
+/** Server MetricValue → raw widget value (for same-day edits). */
 export function toRaw(def: MetricDefinition, value: MetricValue | undefined): unknown {
   if (!value) return def.type === 'multi_enum' ? [] : null
   switch (def.type) {
@@ -43,7 +43,7 @@ export function toRaw(def: MetricDefinition, value: MetricValue | undefined): un
   }
 }
 
-/** Field bắt buộc coi là "đã trả lời" chưa (để bật nút tiếp tục). */
+/** Is a required field considered "answered" (enables the continue button). */
 export function isAnswered(def: MetricDefinition, raw: unknown): boolean {
   return toInput(def, raw) !== null
 }

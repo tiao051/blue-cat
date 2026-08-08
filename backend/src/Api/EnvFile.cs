@@ -1,8 +1,9 @@
 namespace DailyTracker.Api;
 
 /// <summary>
-/// Nạp file .env vào environment variables của process (biến đã có sẵn thì giữ nguyên —
-/// env thật luôn thắng file). Đủ dùng cho local dev; trên server dùng env vars của compose.
+/// Loads a .env file into the process environment (existing variables win —
+/// real env always beats the file). Good enough for local dev; production
+/// uses compose/systemd env vars.
 /// </summary>
 public static class EnvFile
 {

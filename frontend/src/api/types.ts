@@ -1,4 +1,4 @@
-// Types viết tay cho M1 (codegen để sau — plan). Khớp SDL backend.
+// Hand-written types for M1 (codegen later — per plan). Mirrors the backend SDL.
 
 export type Phase = 'MORNING' | 'EVENING' | 'ANYTIME'
 export type DayType = 'WORKDAY' | 'WEEKEND' | 'DAYOFF' | 'SICK'
@@ -110,5 +110,5 @@ export interface Goal {
   targetDate?: string | null
 }
 
-/** Input cho mutation — giống MetricValue nhưng bắt buộc đủ key. */
+/** Mutation input — same shape as MetricValue with a required key. */
 export type MetricValueInput = MetricValue

@@ -1,6 +1,6 @@
 <script setup lang="ts">
-// Dải 10 ô, vuốt ngang hoặc chạm, số lớn phía trên (spec §5 swipe-scale).
-// Instrument: ô là vạch đo, giá trị chạy mono, đậm dần theo mức — không đỏ/vàng/xanh.
+// A strip of 10 cells, swipe or tap, big number above (spec §5 swipe-scale).
+// Instrument: cells are gauge ticks, mono readout, darkening with level — never red/yellow/green.
 import { computed, ref } from 'vue'
 import type { MetricDefinition } from '@/api/types'
 
@@ -109,7 +109,7 @@ function onPointerUp() {
   border-radius: var(--radius);
   background: var(--surface);
 }
-/* gauge: vạch đo mọc cao dần từ đáy như thang mực */
+/* gauge: ticks grow taller from the bottom like a level scale */
 .scale-cell {
   flex: 1;
   height: calc(38% + 62% * var(--cell-strength));

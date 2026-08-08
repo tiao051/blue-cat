@@ -6,14 +6,14 @@ const session = useSessionStore()
 </script>
 
 <template>
-  <!-- Màn Cài đặt đầy đủ là v2 — v1 chỉnh config bằng insert DB (spec v3.2) -->
+  <!-- The full Settings screen is v2 — v1 changes config by inserting DB documents (spec v3.2) -->
   <div class="settings">
-    <h1>Cài đặt</h1>
+    <h1>Settings</h1>
     <p class="muted">
-      Thêm/sửa habit và biến theo dõi: insert document vào MongoDB — form tự cập nhật, không cần
-      deploy. UI đầy đủ là chuyện v2.
+      Adding or editing habits and tracked metrics: insert a document into MongoDB — the form
+      updates itself, no deploy needed. A full UI for this is a v2 thing.
     </p>
-    <UiButton label="Đổi secret key" variant="ghost" @click="session.reset()" />
+    <UiButton label="Change secret key" variant="ghost" @click="session.reset()" />
   </div>
 </template>
 

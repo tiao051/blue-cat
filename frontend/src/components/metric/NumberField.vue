@@ -1,5 +1,5 @@
 <script setup lang="ts">
-// Stepper — bước cấu hình được, 0.5 cho giờ (spec §5)
+// Stepper — configurable step, 0.5 for hours (spec §5)
 import { computed } from 'vue'
 import UiStepper from '@/components/ui/UiStepper.vue'
 import type { MetricDefinition } from '@/api/types'

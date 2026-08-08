@@ -4,8 +4,8 @@ using System.Text;
 namespace DailyTracker.Api.Auth;
 
 /// <summary>
-/// Auth cho app một người dùng (spec §10): so X-Secret-Key với APP_SECRET_KEY.
-/// Chỉ enforce trên POST /graphql (nơi có dữ liệu) — /health và asset Nitro IDE mở.
+/// Auth for a single-user app (spec §10): compares X-Secret-Key against APP_SECRET_KEY.
+/// Enforced only on POST /graphql (where the data lives) — /health and Nitro IDE assets stay open.
 /// </summary>
 public sealed class ApiKeyMiddleware(RequestDelegate next, IConfiguration config)
 {
@@ -28,7 +28,7 @@ public sealed class ApiKeyMiddleware(RequestDelegate next, IConfiguration config
 
     private bool IsAuthorized(HttpContext context)
     {
-        if (_secret.Length == 0) return false; // không cấu hình secret = khoá cửa, không phải mở toang
+        if (_secret.Length == 0) return false; // no secret configured = locked door, not an open one
 
         if (!context.Request.Headers.TryGetValue("X-Secret-Key", out var provided)) return false;
         var providedBytes = Encoding.UTF8.GetBytes(provided.ToString());

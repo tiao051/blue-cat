@@ -6,16 +6,16 @@ namespace DailyTracker.Api.Migrations;
 
 public interface IMigration
 {
-    /// <summary>Định danh duy nhất, chạy theo thứ tự sort — vd "M0001_CollectionsAndIndexes".</summary>
+    /// <summary>Unique id, executed in sort order — e.g. "M0001_CollectionsAndIndexes".</summary>
     string Id { get; }
 
     Task UpAsync(IMongoDatabase db, CancellationToken ct);
 }
 
 /// <summary>
-/// Chạy các migration chưa có trong collection `migrations`, theo thứ tự Id.
-/// Idempotent 2 tầng: runner bỏ qua migration đã ghi sổ, và bản thân mỗi migration
-/// dùng upsert/create-if-missing nên lỡ chạy lại cũng không nhân đôi (checklist M0).
+/// Runs migrations not yet recorded in the `migrations` collection, in Id order.
+/// Idempotent on two levels: the runner skips recorded migrations, and each migration
+/// itself uses upsert/create-if-missing so accidental re-runs never duplicate (M0 checklist).
 /// </summary>
 public static class MigrationRunner
 {
@@ -36,16 +36,16 @@ public static class MigrationRunner
         {
             if (appliedIds.Contains(migration.Id))
             {
-                logger.LogDebug("Migration {Id} đã chạy, bỏ qua", migration.Id);
+                logger.LogDebug("Migration {Id} already applied, skipping", migration.Id);
                 continue;
             }
 
-            logger.LogInformation("Chạy migration {Id}...", migration.Id);
+            logger.LogInformation("Applying migration {Id}...", migration.Id);
             await migration.UpAsync(db, ct);
             await ledger.InsertOneAsync(
                 new BsonDocument { { "_id", migration.Id }, { "appliedAt", DateTime.UtcNow } },
                 cancellationToken: ct);
-            logger.LogInformation("Migration {Id} xong", migration.Id);
+            logger.LogInformation("Migration {Id} done", migration.Id);
         }
     }
 }

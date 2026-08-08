@@ -1,5 +1,5 @@
 <script setup lang="ts">
-// Check-in sáng 3 bước (spec §9.1) — step derive từ definitions, refetch mỗi lần mở (spec §5).
+// 3-step morning check-in (spec §9.1) — steps derive from definitions, refetched on every open (spec §5).
 import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { execute, executeMutation } from '@/api/client'
@@ -26,8 +26,8 @@ onMounted(async () => {
     const defs = await definitions.fetchDefinitions('MORNING')
     steps.value = deriveMorningSteps(defs)
 
-    // Giá trị khởi tạo: đã nhập hôm nay (sửa trong ngày) — với time thì lấy
-    // giá trị lần trước làm default (spec §5): giờ ngủ hôm qua đỡ phải chọn lại từ 00:00
+    // Initial values: anything already entered today (same-day edits) — for time fields,
+    // last time's value becomes the default (spec §5): saves re-picking bedtime from 00:00
     const [todayData, yesterdayData] = await Promise.all([
       execute<{ today: TodayPayload }>(TODAY_QUERY, { date: today }),
       execute<{ today: TodayPayload }>(TODAY_QUERY, { date: addDays(today, -1) }),
@@ -38,7 +38,7 @@ onMounted(async () => {
       const existing = targetEntry.values.find((v) => v.key === def.key)
       let raw = toRaw(def, existing)
       if (def.type === 'time' && (raw === null || raw === undefined)) {
-        // nhớ lần trước: lấy từ hôm qua
+        // remember last time: take yesterday's value
         raw = toRaw(def, yesterdayData.today.entry.values.find((v) => v.key === def.key))
       }
       if (raw !== null && raw !== undefined) init[def.key] = raw
@@ -68,7 +68,7 @@ async function onFinish(values: MetricValueInput[], deferredKeys: string[]) {
   <CheckinWizard
     v-if="steps"
     :steps="steps"
-    title="Check-in sáng"
+    title="Morning check-in"
     :initial="initial"
     :submitting="submitting"
     @finish="onFinish"

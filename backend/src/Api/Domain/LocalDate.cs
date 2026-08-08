@@ -3,8 +3,8 @@ using System.Globalization;
 namespace DailyTracker.Api.Domain;
 
 /// <summary>
-/// Mọi "ngày" trong hệ thống là chuỗi yyyy-MM-dd theo giờ local của client (spec §10) —
-/// server không làm timezone math. Class này gom toàn bộ phép toán trên chuỗi ngày.
+/// Every "date" in the system is a yyyy-MM-dd string in the client's local time (spec §10) —
+/// the server does no timezone math. This class gathers all date-string arithmetic.
 /// </summary>
 public static class LocalDate
 {
@@ -22,7 +22,7 @@ public static class LocalDate
 
     public static int Compare(string a, string b) => string.CompareOrdinal(a, b);
 
-    /// <summary>Mã tuần ISO 8601, tuần bắt đầu thứ Hai — vd "2026-W32" (spec §6).</summary>
+    /// <summary>ISO 8601 week code, Monday-first — e.g. "2026-W32" (spec §6).</summary>
     public static string IsoWeek(string date)
     {
         var d = Parse(date).ToDateTime(TimeOnly.MinValue);
@@ -31,10 +31,10 @@ public static class LocalDate
         return $"{year}-W{week:D2}";
     }
 
-    /// <summary>Mã tháng — vd "2026-08".</summary>
+    /// <summary>Month code — e.g. "2026-08".</summary>
     public static string MonthKey(string date) => date[..7];
 
-    /// <summary>Mặc định dayType theo lịch: T7/CN là weekend, còn lại workday (spec v3.2).</summary>
+    /// <summary>Calendar default dayType: Sat/Sun are weekend, the rest workday (spec v3.2).</summary>
     public static string DefaultDayType(string date)
     {
         var dow = Parse(date).DayOfWeek;
@@ -42,14 +42,14 @@ public static class LocalDate
     }
 
     /// <summary>
-    /// Tổng giờ ngủ từ hai mốc "HH:mm", xử lý qua nửa đêm: 23:30 → 07:00 = 7.5 (spec §8).
-    /// start == end hiểu là ngủ 0 tiếng, không phải 24.
+    /// Sleep hours between two "HH:mm" marks, crossing midnight: 23:30 → 07:00 = 7.5 (spec §8).
+    /// start == end means 0 hours of sleep, not 24.
     /// </summary>
     public static double SleepHours(string start, string end)
     {
         var s = TimeOnly.ParseExact(start, "HH:mm", CultureInfo.InvariantCulture);
         var e = TimeOnly.ParseExact(end, "HH:mm", CultureInfo.InvariantCulture);
-        var minutes = (e - s).TotalMinutes; // TimeOnly trừ nhau tự wrap qua nửa đêm, kết quả luôn >= 0
+        var minutes = (e - s).TotalMinutes; // TimeOnly subtraction wraps past midnight, always >= 0
         return Math.Round(minutes / 60.0, 2);
     }
 }

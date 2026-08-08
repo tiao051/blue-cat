@@ -1,4 +1,4 @@
-// GraphQL documents viết tay (M1). Fragment chung cho DailyEntry để mutation nào cũng trả cùng shape.
+// Hand-written GraphQL documents (M1). A shared DailyEntry fragment so every mutation returns the same shape.
 
 const DAILY_ENTRY_FIELDS = `
   date

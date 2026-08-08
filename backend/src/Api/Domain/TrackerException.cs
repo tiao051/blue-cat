@@ -1,4 +1,4 @@
 namespace DailyTracker.Api.Domain;
 
-/// <summary>Lỗi nghiệp vụ có message an toàn để trả thẳng ra GraphQL error.</summary>
+/// <summary>A domain error whose message is safe to surface directly as a GraphQL error.</summary>
 public sealed class TrackerException(string message) : Exception(message);

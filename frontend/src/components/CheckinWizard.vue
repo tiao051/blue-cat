@@ -1,6 +1,6 @@
 <script setup lang="ts">
-// Wizard check-in: một bước một màn, thanh tiến trình vạch, tối ưu ngón cái (spec §9.1).
-// Mobile full-screen; desktop thành panel giữa màn. Steps derive từ definitions.
+// Check-in wizard: one step per screen, bar progress, thumb-optimized (spec §9.1).
+// Full-screen on mobile; a centered panel on desktop. Steps derive from definitions.
 import { computed, reactive, ref } from 'vue'
 import UiButton from '@/components/ui/UiButton.vue'
 import type { CheckinStep } from '@/lib/checkinSteps'
@@ -83,7 +83,7 @@ function finish() {
   <div class="wizard-backdrop">
     <div class="wizard">
       <header class="wizard-header">
-        <button class="close" type="button" aria-label="Đóng" @click="emit('cancel')">×</button>
+        <button class="close" type="button" aria-label="Close" @click="emit('cancel')">×</button>
         <div class="progress">
           <div
             v-for="(s, i) in steps"
@@ -97,13 +97,13 @@ function finish() {
       </header>
 
       <main class="wizard-body">
-        <!-- Cặp ngủ: hai time picker + tổng số giờ tính tự động (spec §9.1) -->
+        <!-- The sleep pair: two time pickers + auto-computed total (spec §9.1) -->
         <template v-if="step.kind === 'sleep'">
           <div v-for="def in step.defs" :key="def.key" class="field-block">
             <MetricField :def="def" v-model="raw[def.key]" />
           </div>
           <p class="sleep-total data" :class="{ empty: sleepTotal === null }">
-            {{ sleepTotal !== null ? `= ${sleepTotal} tiếng` : 'chọn đủ hai mốc' }}
+            {{ sleepTotal !== null ? `= ${sleepTotal} hours` : 'pick both times' }}
           </p>
         </template>
 
@@ -113,14 +113,14 @@ function finish() {
             <div class="field-actions">
               <UiButton
                 v-if="def.deferrableDays != null && !isAnswered(def, raw[def.key])"
-                label="Để sau"
+                label="Later"
                 variant="subtle"
                 size="sm"
                 @click="defer(def.key)"
               />
               <UiButton
                 v-if="def.validation?.required === false && step.defs.length === 1"
-                label="Bỏ qua"
+                label="Skip"
                 variant="subtle"
                 size="sm"
                 @click="skip(def.key)"
@@ -131,9 +131,9 @@ function finish() {
       </main>
 
       <footer class="wizard-footer">
-        <UiButton v-if="current > 0" label="Quay lại" variant="ghost" size="lg" @click="back" />
+        <UiButton v-if="current > 0" label="Back" variant="ghost" size="lg" @click="back" />
         <UiButton
-          :label="isLast ? 'Xong' : 'Tiếp tục'"
+          :label="isLast ? 'Done' : 'Continue'"
           :disabled="!canAdvance"
           :loading="submitting"
           size="lg"
@@ -161,7 +161,7 @@ function finish() {
   background: var(--bg);
 }
 
-/* Desktop: panel giữa màn, có khung — không kéo dãn nút hết chiều ngang */
+/* Desktop: a framed centered panel — no full-width stretched buttons */
 @media (min-width: 900px) {
   .wizard-backdrop {
     align-items: center;

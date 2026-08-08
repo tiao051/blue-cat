@@ -1,4 +1,4 @@
-/** Mọi "ngày" là chuỗi yyyy-MM-dd theo giờ local (spec §10). */
+/** Every "date" is a yyyy-MM-dd string in local time (spec §10). */
 
 function toDateString(d: Date): string {
   const y = d.getFullYear()
@@ -8,9 +8,9 @@ function toDateString(d: Date): string {
 }
 
 /**
- * Ngày logic đang theo dõi. Trước 4h sáng vẫn tính là hôm trước —
- * spec §7: ngày không đóng lúc nửa đêm vì thường ngủ sau đó
- * (check-in tối lúc 00:30 vẫn thuộc về "hôm nay" theo nghĩa sinh hoạt).
+ * The logical day being tracked. Before 4am it still counts as the previous day —
+ * spec §7: days don't close at midnight because you're usually asleep after it
+ * (an evening check-in at 00:30 still belongs to "today" in the lived sense).
  */
 export function logicalToday(now: Date = new Date()): string {
   const d = new Date(now)
@@ -24,7 +24,7 @@ export function addDays(date: string, days: number): string {
   return toDateString(d)
 }
 
-/** Tổng giờ ngủ từ hai mốc HH:mm, wrap qua nửa đêm: 23:30 → 07:00 = 7.5 (khớp backend). */
+/** Sleep hours between two HH:mm marks, wrapping past midnight: 23:30 → 07:00 = 7.5 (matches backend). */
 export function sleepHours(start: string, end: string): number | null {
   const parse = (t: string): number | null => {
     const m = /^(\d{2}):(\d{2})$/.exec(t)
@@ -38,11 +38,11 @@ export function sleepHours(start: string, end: string): number | null {
   return Math.round((minutes / 60) * 100) / 100
 }
 
-/** Mã tuần ISO 8601 (tuần bắt đầu thứ Hai) — vd "2026-W32", khớp backend. */
+/** ISO 8601 week code (Monday-first) — e.g. "2026-W32", matches backend. */
 export function isoWeekCode(date: string): string {
   const d = new Date(`${date}T12:00:00`)
-  // dời về thứ Năm của tuần ISO hiện tại
-  const day = (d.getDay() + 6) % 7 // 0 = thứ Hai
+  // shift to the Thursday of the current ISO week
+  const day = (d.getDay() + 6) % 7 // 0 = Monday
   d.setDate(d.getDate() - day + 3)
   const isoYear = d.getFullYear()
   const jan4 = new Date(isoYear, 0, 4)
@@ -53,9 +53,10 @@ export function isoWeekCode(date: string): string {
   return `${isoYear}-W${String(week).padStart(2, '0')}`
 }
 
-const WEEKDAYS = ['Chủ nhật', 'Thứ hai', 'Thứ ba', 'Thứ tư', 'Thứ năm', 'Thứ sáu', 'Thứ bảy']
+const WEEKDAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 
 export function formatDisplay(date: string): string {
   const d = new Date(`${date}T12:00:00`)
-  return `${WEEKDAYS[d.getDay()]}, ${d.getDate()}/${d.getMonth() + 1}`
+  return `${WEEKDAYS[d.getDay()]}, ${MONTHS[d.getMonth()]} ${d.getDate()}`
 }

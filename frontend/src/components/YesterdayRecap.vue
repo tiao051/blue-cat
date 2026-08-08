@@ -1,6 +1,6 @@
 <script setup lang="ts">
-// Nhìn lại hôm qua — read-only: trạng thái sổ, việc đã/chưa làm, habit đã tick.
-// Chỉ xem, không sửa (miss là miss — R18).
+// Yesterday's recap — read-only: day status, tasks done/undone, habits ticked.
+// View only, never editable (a miss is a miss — R18).
 import { computed } from 'vue'
 import TaskList from '@/components/TaskList.vue'
 import type { DailyEntry, Habit, Task } from '@/api/types'
@@ -15,17 +15,17 @@ const props = defineProps<{
 const statusLabel = computed(() => {
   switch (props.entry?.status) {
     case 'CLOSED':
-      return { text: 'đủ sổ', tone: 'good' }
+      return { text: 'complete', tone: 'good' }
     case 'PARTIAL':
-      return { text: 'thiếu một phần', tone: 'mid' }
+      return { text: 'partial', tone: 'mid' }
     case 'OPEN':
-      return { text: 'chưa đóng sổ', tone: 'mid' }
+      return { text: 'not closed yet', tone: 'mid' }
     default:
-      return { text: 'trống', tone: 'faint' }
+      return { text: 'empty', tone: 'faint' }
   }
 })
 
-/** "gym ✓ 8đ · đọc 1.5h" — chỉ habit có dữ liệu thật */
+/** "gym ✓ q8 · read 1.5h" — only habits with real data */
 const habitSummary = computed(() => {
   if (!props.entry) return []
   const labels = new Map(props.habits.map((h) => [h.key, h.shortLabel]))
@@ -36,7 +36,7 @@ const habitSummary = computed(() => {
       if (h.state === 'NOT_DONE') return `${name} ✗`
       const parts = [name, '✓']
       if (h.hours != null) parts.push(`${h.hours}h`)
-      if (h.quality != null) parts.push(`${h.quality}đ`)
+      if (h.quality != null) parts.push(`q${h.quality}`)
       return parts.join(' ')
     })
 })
@@ -55,9 +55,9 @@ const hasContent = computed(
 <template>
   <section class="recap">
     <h2 class="overline rule-title">
-      Hôm qua
+      Yesterday
       <span class="status data" :class="`tone-${statusLabel.tone}`">{{ statusLabel.text }}</span>
-      <span v-if="quickRatio" class="ratio data">{{ quickRatio }} việc</span>
+      <span v-if="quickRatio" class="ratio data">{{ quickRatio }} tasks</span>
     </h2>
 
     <template v-if="hasContent">
@@ -66,7 +66,7 @@ const hasContent = computed(
       </p>
       <TaskList v-if="tasks.length > 0" :tasks="tasks" readonly />
     </template>
-    <p v-else class="empty data">không có gì được ghi lại</p>
+    <p v-else class="empty data">nothing was recorded</p>
   </section>
 </template>
 
@@ -79,7 +79,7 @@ const hasContent = computed(
 .rule-title {
   margin: 0;
 }
-/* chip trạng thái đứng trước hairline */
+/* the status chip sits before the hairline */
 .rule-title .status {
   order: 0;
 }

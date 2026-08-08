@@ -5,7 +5,7 @@ import type { MetricDefinition } from '@/api/types'
 
 const def: MetricDefinition = {
   key: 'attention_main',
-  label: 'Tâm trí chủ yếu ở đâu',
+  label: 'Where was your mind today?',
   type: 'multi_enum',
   phase: 'EVENING',
   order: 60,
@@ -13,16 +13,16 @@ const def: MetricDefinition = {
   maxSelect: 2,
   active: true,
   options: [
-    { value: 'work', label: 'Công việc' },
-    { value: 'learning', label: 'Học & phát triển' },
-    { value: 'phone', label: 'Cày phone, giải trí' },
-    { value: 'social', label: 'Xã hội, người khác' },
-    { value: 'empty', label: 'Trống rỗng' },
+    { value: 'work', label: 'Work' },
+    { value: 'learning', label: 'Learning & growth' },
+    { value: 'phone', label: 'Phone & entertainment' },
+    { value: 'social', label: 'Social & other people' },
+    { value: 'empty', label: 'Empty' },
   ],
 }
 
-describe('MultiEnumField — chặn cứng maxSelect (checklist M1)', () => {
-  it('chọn được tới maxSelect', async () => {
+describe('MultiEnumField — hard maxSelect block (M1 checklist)', () => {
+  it('allows selecting up to maxSelect', async () => {
     const wrapper = mount(MultiEnumField, {
       props: { def, modelValue: [] as string[], 'onUpdate:modelValue': (v: string[]) => wrapper.setProps({ modelValue: v }) },
     })
@@ -33,28 +33,28 @@ describe('MultiEnumField — chặn cứng maxSelect (checklist M1)', () => {
     expect(wrapper.props('modelValue')).toEqual(['work', 'learning'])
   })
 
-  it('đủ maxSelect thì chip chưa chọn bị disable và click không ăn', async () => {
+  it('disables unselected chips at the limit and ignores their clicks', async () => {
     const wrapper = mount(MultiEnumField, {
       props: { def, modelValue: ['work', 'learning'] },
     })
 
     const chips = wrapper.findAll('button.chip')
-    // chip thứ 3 (phone) chưa chọn → disabled
+    // third chip (phone) is unselected → disabled
     expect(chips[2]!.attributes('disabled')).toBeDefined()
 
     await chips[2]!.trigger('click')
-    // không emit thêm lựa chọn thứ 3
+    // no third selection is emitted
     const emitted = wrapper.emitted('update:modelValue')
     expect(emitted ?? []).toEqual([])
   })
 
-  it('bỏ chọn được khi đang ở limit', async () => {
+  it('still allows deselecting while at the limit', async () => {
     const wrapper = mount(MultiEnumField, {
       props: { def, modelValue: ['work', 'learning'] },
     })
 
     const chips = wrapper.findAll('button.chip')
-    await chips[0]!.trigger('click') // bỏ 'work'
+    await chips[0]!.trigger('click') // deselect 'work'
     expect(wrapper.emitted('update:modelValue')![0]![0]).toEqual(['learning'])
   })
 })

@@ -1,7 +1,7 @@
 <script setup lang="ts">
-// Habit list kiểu todo: checkbox tri-state đầu dòng (nguyên tắc 7 — ô trống = no_data,
-// ✓ = done, ✗ = not_done). Click = toggle done; nút ✗ là action phụ, desktop hiện khi
-// hover dòng (pattern Todoist), mobile luôn hiện. Giờ 0 ≠ no_data.
+// Todo-style habit list: tri-state checkbox leading each row (principle 7 — empty = no_data,
+// ✓ = done, ✗ = not_done). Click toggles done; the ✗ button is the secondary action, revealed
+// on row hover on desktop (Todoist pattern), always visible on mobile. Hours 0 ≠ no_data.
 import { computed } from 'vue'
 import UiStepper from '@/components/ui/UiStepper.vue'
 import UiSelect from '@/components/ui/UiSelect.vue'
@@ -30,20 +30,20 @@ function entryOf(key: string): HabitEntry {
 
 function apply(habit: Habit, state: HabitState, hoursOverride?: number | null) {
   const cur = entryOf(habit.key)
-  // no_data không được kèm giờ (backend enforce); rời done thì quality rơi
+  // no_data can't carry hours (backend enforces); leaving done drops quality
   const hours =
     state === 'NO_DATA' ? null : hoursOverride !== undefined ? hoursOverride : (cur.hours ?? null)
   const quality = state === 'DONE' ? (cur.quality ?? null) : null
   emit('change', habit.key, state, hours, quality)
 }
 
-/** Click checkbox: toggle done ↔ trống (như todo list). */
+/** Checkbox click: toggle done ↔ empty (like a todo list). */
 function toggleDone(habit: Habit) {
   const cur = entryOf(habit.key)
   apply(habit, cur.state === 'DONE' ? 'NO_DATA' : 'DONE')
 }
 
-/** Nút ✗: toggle not_done ↔ trống. */
+/** The ✗ button: toggle not_done ↔ empty. */
 function toggleNotDone(habit: Habit) {
   const cur = entryOf(habit.key)
   apply(habit, cur.state === 'NOT_DONE' ? 'NO_DATA' : 'NOT_DONE')
@@ -69,12 +69,12 @@ function setQuality(habit: Habit, quality: string | number | null) {
       class="habit-row"
       :class="{ done: entryOf(habit.key).state === 'DONE', 'not-done': entryOf(habit.key).state === 'NOT_DONE' }"
     >
-      <!-- Checkbox tri-state: trống / ✓ / ✗ -->
+      <!-- Tri-state checkbox: empty / ✓ / ✗ -->
       <button
         type="button"
         class="checkbox"
         :disabled="disabled"
-        :aria-label="`${habit.label}: ${entryOf(habit.key).state === 'DONE' ? 'done' : entryOf(habit.key).state === 'NOT_DONE' ? 'không làm' : 'chưa có dữ liệu'}`"
+        :aria-label="`${habit.label}: ${entryOf(habit.key).state === 'DONE' ? 'done' : entryOf(habit.key).state === 'NOT_DONE' ? 'not done' : 'no data'}`"
         @click="toggleDone(habit)"
       >
         <span class="box">
@@ -91,10 +91,10 @@ function setQuality(habit: Habit, quality: string | number | null) {
 
       <span class="habit-label">{{ habit.label }}</span>
 
-      <!-- Metadata inline (desktop) / xuống dòng (mobile) -->
+      <!-- Metadata inline (desktop) / wrapped below (mobile) -->
       <div class="habit-meta">
         <template v-if="habit.measure === 'duration' && entryOf(habit.key).state !== 'NO_DATA'">
-          <span class="meta-label">giờ</span>
+          <span class="meta-label">hours</span>
           <UiStepper
             :model-value="entryOf(habit.key).hours ?? null"
             :step="0.5"
@@ -105,7 +105,7 @@ function setQuality(habit: Habit, quality: string | number | null) {
           />
         </template>
         <template v-if="habit.hasQuality && entryOf(habit.key).state === 'DONE'">
-          <span class="meta-label" :title="habit.qualityLabel ?? 'Chất lượng'">chất lượng</span>
+          <span class="meta-label" :title="habit.qualityLabel ?? 'Quality'">quality</span>
           <UiSelect
             :model-value="entryOf(habit.key).quality ?? null"
             :options="qualityOptions"
@@ -116,13 +116,13 @@ function setQuality(habit: Habit, quality: string | number | null) {
         </template>
       </div>
 
-      <!-- Action phụ: đánh dấu "không làm" — desktop hiện khi hover dòng -->
+      <!-- Secondary action: mark "not done" — revealed on row hover on desktop -->
       <button
         type="button"
         class="mark-not-done data"
         :class="{ engaged: entryOf(habit.key).state === 'NOT_DONE' }"
         :disabled="disabled"
-        :title="entryOf(habit.key).state === 'NOT_DONE' ? 'Bỏ đánh dấu không làm' : 'Đánh dấu không làm'"
+        :title="entryOf(habit.key).state === 'NOT_DONE' ? 'Unmark not done' : 'Mark as not done'"
         @click="toggleNotDone(habit)"
       >
         ✗
@@ -159,7 +159,7 @@ function setQuality(habit: Habit, quality: string | number | null) {
   background: var(--surface-raised);
 }
 
-/* Checkbox: vùng chạm 44px, ô 22px bo góc kiểu Things */
+/* Checkbox: 44px hit area, 22px Things-style rounded box */
 .checkbox {
   grid-area: check;
   width: var(--tap);
@@ -202,7 +202,7 @@ function setQuality(habit: Habit, quality: string | number | null) {
   border-color: var(--accent);
   color: var(--on-accent);
 }
-/* animation vẽ nét tick — micro-interaction kiểu Things */
+/* check-drawing animation — Things-style micro-interaction */
 .done .box svg path {
   stroke-dasharray: 20;
   stroke-dashoffset: 0;
@@ -226,7 +226,7 @@ function setQuality(habit: Habit, quality: string | number | null) {
   min-width: 0;
   transition: color 100ms;
 }
-/* Quy ước todo: dòng đã xử lý dịu đi một bậc */
+/* Todo convention: handled rows step back one level */
 .done .habit-label {
   color: var(--text-muted);
 }
@@ -252,7 +252,7 @@ function setQuality(habit: Habit, quality: string | number | null) {
   margin-left: 0.5rem;
 }
 
-/* Nút ✗ — mobile luôn hiện */
+/* The ✗ button — always visible on mobile */
 .mark-not-done {
   grid-area: x;
   width: 34px;
@@ -282,7 +282,7 @@ function setQuality(habit: Habit, quality: string | number | null) {
   opacity: 0.3;
 }
 
-/* Desktop: một dòng đơn — meta inline phải, ✗ chỉ hiện khi hover (pattern Todoist) */
+/* Desktop: single-line rows — meta inline right, ✗ only on hover (Todoist pattern) */
 @media (min-width: 900px) {
   .habit-row {
     grid-template-columns: auto 1fr auto auto;

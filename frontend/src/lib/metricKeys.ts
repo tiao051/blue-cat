@@ -1,9 +1,9 @@
 /**
- * Hằng số cho những key mà code gọi đích danh (spec §10 — type safety).
- * Mọi key khác đi qua form renderer động, không xuất hiện trong code.
+ * Constants for the keys the code references by name (spec §10 — type safety).
+ * Every other key flows through the dynamic form renderer and never appears in code.
  */
 export const METRIC_KEYS = {
-  /** Cặp duy nhất được gộp màn có chủ đích: hai mốc ngủ + tổng giờ tính tự động */
+  /** The one deliberately paired screen: two sleep marks + auto-computed total */
   sleepStart: 'sleep_start',
   sleepEnd: 'sleep_end',
 } as const

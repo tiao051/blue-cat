@@ -1,5 +1,5 @@
 <script setup lang="ts">
-// Segmented control — trạng thái encode bằng hình khối, không màu mè
+// Segmented control — state encoded in form, not in color noise
 export interface SegmentOption {
   label: string
   value: string

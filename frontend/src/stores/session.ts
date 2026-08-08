@@ -2,7 +2,7 @@ import { computed, ref } from 'vue'
 import { defineStore } from 'pinia'
 import { clearSecretKey, getSecretKey, setSecretKey } from '@/api/client'
 
-/** Secret key nhập một lần, lưu localStorage (spec §10). */
+/** Secret key entered once, kept in localStorage (spec §10). */
 export const useSessionStore = defineStore('session', () => {
   const key = ref(getSecretKey())
 

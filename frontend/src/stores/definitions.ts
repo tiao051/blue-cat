@@ -5,8 +5,8 @@ import { HABITS_QUERY, METRIC_DEFINITIONS_QUERY } from '@/api/operations'
 import type { DayType, Habit, MetricDefinition, Phase } from '@/api/types'
 
 /**
- * Definitions + habits. Metric definitions LUÔN refetch khi mở check-in —
- * để "insert document mới → form tự mọc thêm ô" hoạt động chỉ với một lần mở lại màn (spec §5).
+ * Definitions + habits. Metric definitions are ALWAYS refetched when a check-in opens —
+ * so "insert a new document → the form grows a field" works with a single screen reopen (spec §5).
  */
 export const useDefinitionsStore = defineStore('definitions', () => {
   const habits = ref<Habit[]>([])

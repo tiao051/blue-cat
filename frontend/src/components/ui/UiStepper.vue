@@ -1,5 +1,5 @@
 <script setup lang="ts">
-// Stepper số: − [ 4.5 ] + — số chạy mono, bước cấu hình được (spec §5)
+// Number stepper: − [ 4.5 ] + — mono digits, configurable step (spec §5)
 import { computed } from 'vue'
 
 const props = withDefaults(
@@ -46,7 +46,7 @@ const display = computed(() =>
 
 <template>
   <div class="stepper" :class="{ disabled }">
-    <button type="button" class="nudge" :disabled="disabled" aria-label="Giảm" @click="nudge(-1)">
+    <button type="button" class="nudge" :disabled="disabled" aria-label="Decrease" @click="nudge(-1)">
       −
     </button>
     <input
@@ -58,7 +58,7 @@ const display = computed(() =>
       placeholder="–"
       @change="onInput"
     />
-    <button type="button" class="nudge" :disabled="disabled" aria-label="Tăng" @click="nudge(1)">
+    <button type="button" class="nudge" :disabled="disabled" aria-label="Increase" @click="nudge(1)">
       +
     </button>
   </div>

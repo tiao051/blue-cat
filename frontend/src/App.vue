@@ -1,6 +1,6 @@
 <script setup lang="ts">
-// Nav 4 mục (spec §9): mobile = bottom tab bar, desktop ≥900px = sidebar trái.
-// Màn check-in full-screen tự che nav (meta.fullscreen).
+// 4-item nav (spec §9): mobile = bottom tab bar, desktop ≥900px = left sidebar.
+// Full-screen check-in views hide the nav (meta.fullscreen).
 import { useRoute } from 'vue-router'
 import { useSessionStore } from '@/stores/session'
 import KeyGate from '@/components/KeyGate.vue'
@@ -8,26 +8,26 @@ import KeyGate from '@/components/KeyGate.vue'
 const route = useRoute()
 const session = useSessionStore()
 
-// icon: stroke 1.5px, hình học tối giản — không emoji
+// icons: 1.5px stroke, minimal geometry — no emoji
 const tabs = [
   {
     to: '/',
-    label: 'Hôm nay',
+    label: 'Today',
     d: 'M4 5h16v15H4z M4 9h16 M8 5V3 M16 5V3',
   },
   {
     to: '/plan',
-    label: 'Kế hoạch',
+    label: 'Plan',
     d: 'M4 6h10 M4 12h16 M4 18h13 M17 4l3 2-3 2',
   },
   {
     to: '/analysis',
-    label: 'Phân tích',
+    label: 'Analysis',
     d: 'M5 20V10 M12 20V4 M19 20v-7',
   },
   {
     to: '/settings',
-    label: 'Cài đặt',
+    label: 'Settings',
     d: 'M4 8h10 M17 8h3 M14 5v6 M4 16h3 M10 16h10 M7 13v6',
   },
 ]
@@ -115,7 +115,7 @@ const tabs = [
 .nav-item.active {
   color: var(--accent);
 }
-/* kim chỉ: vạch amber phía trên tab active (mobile) */
+/* needle: amber bar above the active tab (mobile) */
 .nav-item::before {
   content: '';
   position: absolute;
@@ -139,7 +139,7 @@ const tabs = [
   letter-spacing: 0.02em;
 }
 
-/* ---- Desktop ≥900px: sidebar trái ---- */
+/* ---- Desktop ≥900px: left sidebar ---- */
 @media (min-width: 900px) {
   .shell {
     display: grid;
@@ -185,7 +185,7 @@ const tabs = [
     color: var(--accent);
     background: var(--accent-dim);
   }
-  /* kim chỉ desktop: vạch dọc bên trái item active */
+  /* desktop needle: vertical bar left of the active item */
   .nav-item::before {
     top: 20%;
     bottom: 20%;

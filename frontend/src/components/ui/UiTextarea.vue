@@ -1,5 +1,5 @@
 <script setup lang="ts">
-// Textarea autosize — optional, không giới hạn độ dài (spec §5)
+// Autosizing textarea — optional, unlimited length (spec §5)
 import { ref, watch } from 'vue'
 
 withDefaults(defineProps<{ placeholder?: string; disabled?: boolean }>(), { disabled: false })

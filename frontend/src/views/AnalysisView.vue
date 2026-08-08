@@ -1,8 +1,8 @@
 <template>
-  <!-- Spec §9.5: mobile chỉ hiện thông báo; lưới màu desktop là M4 -->
+  <!-- Spec §9.5: mobile only shows a notice; the desktop color grid is M4 -->
   <div class="analysis">
-    <h1>Phân tích</h1>
-    <p class="muted">Lưới màu cả tháng — thiết kế cho máy tính, sẽ có ở M4.</p>
+    <h1>Analysis</h1>
+    <p class="muted">The month-at-a-glance color grid is designed for desktop — coming in M4.</p>
   </div>
 </template>
 

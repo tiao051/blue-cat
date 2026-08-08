@@ -1,6 +1,6 @@
 <script setup lang="ts">
-// Component DUY NHẤT render một biến theo dõi — switch theo def.type (spec §5).
-// Giá trị raw giữ theo kiểu widget; convert sang MetricValueInput ở lib/metricValues.
+// The ONE component that renders a tracked metric — switches on def.type (spec §5).
+// Raw values stay widget-shaped; conversion to MetricValueInput lives in lib/metricValues.
 import type { MetricDefinition } from '@/api/types'
 import ScaleField from './ScaleField.vue'
 import NumberField from './NumberField.vue'
@@ -12,7 +12,7 @@ import TextField from './TextField.vue'
 defineProps<{
   def: MetricDefinition
   showLabel?: boolean
-  /** raw value: number | string | string[] | null tuỳ type */
+  /** raw value: number | string | string[] | null depending on type */
   modelValue?: unknown
 }>()
 
@@ -59,7 +59,7 @@ const update = (v: unknown) => emit('update:modelValue', v)
       :model-value="(modelValue as string | null) ?? null"
       @update:model-value="update"
     />
-    <p v-else class="unknown">Kiểu '{{ def.type }}' chưa được hỗ trợ</p>
+    <p v-else class="unknown">Type '{{ def.type }}' isn't supported yet</p>
   </div>
 </template>
 

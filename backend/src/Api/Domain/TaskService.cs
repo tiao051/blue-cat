@@ -1,14 +1,14 @@
 using DailyTracker.Api.Data;
 using MongoDB.Bson;
 using MongoDB.Driver;
-// LƯU Ý: tính tử số/việc-thêm-sau nằm ở DayLifecycleService.QuickCountersAsync
-// (nó thuộc vòng đời ngày — chốt cứng lúc đóng sổ).
+// NOTE: quick numerator / added-after-lock counting lives in DayLifecycleService.QuickCountersAsync
+// (it belongs to the day lifecycle — frozen into the document at close time).
 
 namespace DailyTracker.Api.Domain;
 
 /// <summary>
-/// Việc vụn (spec §6 tasks). v1: personal + quick + scope day.
-/// Việc của ngày đã đóng thì khoá — cùng luật với metric (R18).
+/// Quick tasks (spec §6 tasks). v1: personal + quick + scope day.
+/// Tasks of a closed day are locked — same rule as metrics (R18).
 /// </summary>
 public sealed class TaskService(MongoContext ctx, DayLifecycleService lifecycle)
 {
@@ -27,9 +27,9 @@ public sealed class TaskService(MongoContext ctx, DayLifecycleService lifecycle)
         GuardDate(plannedDate);
         GuardDate(clientDate);
         if (string.IsNullOrWhiteSpace(title))
-            throw new TrackerException("Tên việc không được để trống.");
+            throw new TrackerException("Task title can't be empty.");
         if (LocalDate.Compare(plannedDate, clientDate) < 0)
-            throw new TrackerException("Không thêm việc cho ngày đã qua (spec R18).");
+            throw new TrackerException("Can't add tasks to a past day (spec R18).");
 
         var now = DateTime.UtcNow;
         var task = new TaskItem
@@ -72,17 +72,17 @@ public sealed class TaskService(MongoContext ctx, DayLifecycleService lifecycle)
     {
         GuardDate(clientDate);
         if (!ObjectId.TryParse(id, out var oid))
-            throw new TrackerException($"Id việc không hợp lệ: '{id}'.");
+            throw new TrackerException($"Invalid task id: '{id}'.");
 
         var task = await ctx.Tasks.Find(t => t.Id == oid).FirstOrDefaultAsync(ct)
-            ?? throw new TrackerException("Không tìm thấy việc này.");
+            ?? throw new TrackerException("Task not found.");
 
-        // Ngày đã đóng thì việc của ngày đó khoá (spec §7 v3.2)
+        // Tasks of a closed day are locked (spec §7 v3.2)
         if (task.PlannedDate is string date)
         {
             var entry = await lifecycle.GetOrSynthesizeAsync(date, clientDate, ct);
             if (entry.Status is not (DayStatuses.Open))
-                throw new TrackerException($"Ngày {date} đã đóng sổ — việc của ngày đó không sửa được.");
+                throw new TrackerException($"Day {date} is closed — its tasks can't be edited.");
         }
 
         return task;
@@ -91,6 +91,6 @@ public sealed class TaskService(MongoContext ctx, DayLifecycleService lifecycle)
     private static void GuardDate(string date)
     {
         if (!LocalDate.IsValid(date))
-            throw new TrackerException($"Ngày '{date}' không đúng dạng yyyy-MM-dd.");
+            throw new TrackerException($"Date '{date}' is not in yyyy-MM-dd format.");
     }
 }

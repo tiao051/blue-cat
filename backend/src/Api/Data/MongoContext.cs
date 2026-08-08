@@ -9,8 +9,8 @@ public sealed class MongoContext
 {
     static MongoContext()
     {
-        // camelCase field names, bỏ field null (giữ document ~1KB, spec §10),
-        // chịu được field lạ khi đọc lại config cũ (nguyên tắc 9)
+        // camelCase field names, drop null fields (keeps documents ~1KB, spec §10),
+        // tolerate unknown fields when reading old config back (principle 9)
         var pack = new ConventionPack
         {
             new CamelCaseElementNameConvention(),

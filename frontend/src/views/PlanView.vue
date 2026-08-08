@@ -1,5 +1,5 @@
 <script setup lang="ts">
-// v1: một dòng mục tiêu năm read-only (R12). Tầng Tuần đầy đủ là M3.
+// v1: a single read-only year-goal line (R12). The full Week tier arrives in M3.
 import { onMounted, ref } from 'vue'
 import { execute } from '@/api/client'
 import { YEAR_GOAL_QUERY } from '@/api/operations'
@@ -12,19 +12,19 @@ onMounted(async () => {
     const data = await execute<{ yearGoal: Goal | null }>(YEAR_GOAL_QUERY)
     goal.value = data.yearGoal
   } catch {
-    /* màn phụ — không cần báo lỗi */
+    /* secondary screen — not worth surfacing an error */
   }
 })
 </script>
 
 <template>
   <div class="plan">
-    <h1>Kế hoạch</h1>
+    <h1>Plan</h1>
     <div v-if="goal" class="year-goal">
-      <span class="overline">mục tiêu năm</span>
+      <span class="overline">year goal</span>
       <span class="goal-title">{{ goal.title }}</span>
     </div>
-    <p class="muted data">tầng tuần — M3</p>
+    <p class="muted data">week tier — M3</p>
   </div>
 </template>
 

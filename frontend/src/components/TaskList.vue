@@ -1,19 +1,19 @@
 <script setup lang="ts">
-// Việc vụn kiểu todo list: checkbox binary, thêm việc bằng dòng input cuối,
-// bỏ việc bằng nút ✗ (desktop hiện khi hover — cùng ngôn ngữ HabitTickList).
+// Todo-style quick tasks: binary checkbox, add via the trailing input row,
+// drop via the ✗ button (hover-revealed on desktop — same language as HabitTickList).
 import { ref } from 'vue'
 import type { Task } from '@/api/types'
 
 const props = withDefaults(
   defineProps<{
     tasks: Task[]
-    /** cho phép thêm việc mới (ngày chưa qua) */
+    /** allow adding new tasks (day hasn't passed) */
     addable?: boolean
-    /** read-only toàn bộ (ngày đã đóng) */
+    /** fully read-only (day is closed) */
     readonly?: boolean
     addPlaceholder?: string
   }>(),
-  { addable: false, readonly: false, addPlaceholder: 'Thêm việc…' },
+  { addable: false, readonly: false, addPlaceholder: 'Add a task…' },
 )
 
 const emit = defineEmits<{
@@ -40,7 +40,7 @@ function submit() {
           type="button"
           class="checkbox"
           :disabled="readonly"
-          :aria-label="`${task.title}: ${task.status === 'done' ? 'xong' : 'chưa xong'}`"
+          :aria-label="`${task.title}: ${task.status === 'done' ? 'done' : 'not done yet'}`"
           @click="emit('toggle', task.id, task.status !== 'done')"
         >
           <span class="box">
@@ -55,7 +55,7 @@ function submit() {
           v-if="!readonly"
           type="button"
           class="drop-btn data"
-          title="Bỏ việc này"
+          title="Drop this task"
           @click="emit('drop', task.id)"
         >
           ✗
@@ -63,7 +63,7 @@ function submit() {
       </li>
     </ul>
 
-    <p v-else-if="!addable" class="empty data">không có việc nào</p>
+    <p v-else-if="!addable" class="empty data">nothing here</p>
 
     <div v-if="addable && !readonly" class="add-row">
       <span class="add-plus data">+</span>
@@ -163,7 +163,7 @@ function submit() {
   font-size: 0.95rem;
   transition: color 100ms;
 }
-/* quy ước todo: việc xong gạch nhẹ + dịu màu */
+/* todo convention: finished tasks get a light strikethrough + muted color */
 .done .task-title {
   color: var(--text-faint);
   text-decoration: line-through;

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-// Màn nhập secret key lần đầu — nhập một lần, lưu localStorage (spec §10)
+// First-run secret key gate — entered once, kept in localStorage (spec §10)
 import { ref } from 'vue'
 import UiButton from '@/components/ui/UiButton.vue'
 import UiInput from '@/components/ui/UiInput.vue'
@@ -17,10 +17,10 @@ function save() {
   <div class="gate">
     <div class="gate-card">
       <p class="overline">daily tracker</p>
-      <h1 class="gate-title">Nhập secret key</h1>
-      <p class="muted">Chỉ cần một lần trên thiết bị này.</p>
+      <h1 class="gate-title">Enter your secret key</h1>
+      <p class="muted">Only needed once on this device.</p>
       <UiInput v-model="input" type="password" mono placeholder="secret key" @enter="save" />
-      <UiButton label="Vào app" size="lg" block :disabled="input.trim().length === 0" @click="save" />
+      <UiButton label="Unlock" size="lg" block :disabled="input.trim().length === 0" @click="save" />
     </div>
   </div>
 </template>

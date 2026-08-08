@@ -7,8 +7,8 @@ namespace DailyTracker.Api.GraphQL;
 public class Query
 {
     /// <summary>
-    /// Definitions đang active, lọc theo phase và dayType (evaluate visibleWhen — spec §5).
-    /// Frontend dựng form từ đây, không hardcode.
+    /// Active definitions, filtered by phase and dayType (evaluating visibleWhen — spec §5).
+    /// The frontend builds forms from these; nothing is hardcoded.
     /// </summary>
     public async Task<List<MetricDefinitionDto>> GetMetricDefinitions(
         Phase? phase, DayType? dayType, MongoContext ctx, CancellationToken ct)
@@ -24,7 +24,7 @@ public class Query
         return filtered.OrderBy(d => d.Order).Select(MetricDefinitionDto.From).ToList();
     }
 
-    /// <summary>visibleWhen là phép khớp giá trị đơn giản — v1 chỉ biết field dayType (spec §5, không DSL).</summary>
+    /// <summary>visibleWhen is a simple value match — v1 only knows the dayType field (spec §5, no DSL).</summary>
     private static bool IsVisible(MetricDefinition def, string dayType) =>
         def.VisibleWhen is null
         || def.VisibleWhen.Field != "dayType"
@@ -34,7 +34,7 @@ public class Query
         (await ctx.Habits.Find(h => h.Active).SortBy(h => h.Order).ToListAsync(ct))
         .Select(HabitDto.From).ToList();
 
-    /// <summary>Entry một ngày. clientDate để lazy-close và synthesize missed cho ngày quá khứ không có doc.</summary>
+    /// <summary>One day's entry. clientDate drives lazy closing and synthesizes missed for doc-less past days.</summary>
     public async Task<DailyEntryDto> GetDailyEntry(
         string date, string clientDate, DayLifecycleService lifecycle, CancellationToken ct)
     {
@@ -42,7 +42,7 @@ public class Query
         return DailyEntryDto.From(await lifecycle.GetOrSynthesizeAsync(date, clientDate, ct));
     }
 
-    /// <summary>Màn Hôm nay: entry của date + các field để-sau còn hạn (spec §9.2).</summary>
+    /// <summary>The Today screen: date's entry + deferred fields still inside their window (spec §9.2).</summary>
     public async Task<TodayPayload> GetToday(
         string date, DayLifecycleService lifecycle, TaskService tasks, CancellationToken ct)
     {
@@ -53,7 +53,7 @@ public class Query
         var dto = DailyEntryDto.From(entry);
         if (entry.Status == DayStatuses.Open)
         {
-            // Ngày đang mở: tử số + việc-thêm-sau tính live từ tasks (đóng sổ mới chốt cứng)
+            // Open day: numerator + added-after-lock computed live from tasks (frozen only at close)
             var (done, addedLater) = await lifecycle.QuickCountersAsync(entry, ct);
             dto = dto with { QuickDone = done, QuickAddedLater = addedLater };
         }
@@ -61,11 +61,11 @@ public class Query
         return new TodayPayload(dto, deferred.Select(DeferredFieldDto.From).ToList());
     }
 
-    /// <summary>Việc trong khoảng ngày (hôm qua/hôm nay/ngày mai trên màn Hôm nay).</summary>
+    /// <summary>Tasks within a date range (yesterday/today/tomorrow on the Today screen).</summary>
     public async Task<List<TaskDto>> GetTasks(string from, string to, TaskService tasks, CancellationToken ct) =>
         (await tasks.GetRangeAsync(from, to, ct)).Select(TaskDto.From).ToList();
 
-    /// <summary>Một dòng mục tiêu năm read-only (R12, v1).</summary>
+    /// <summary>The single read-only year goal line (R12, v1).</summary>
     public async Task<GoalDto?> GetYearGoal(MongoContext ctx, CancellationToken ct)
     {
         var goal = await ctx.Goals.Find(g => g.Scope == "year" && g.Active).FirstOrDefaultAsync(ct);

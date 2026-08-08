@@ -4,7 +4,7 @@ using HotChocolate.Execution;
 
 namespace DailyTracker.Api.GraphQL;
 
-/// <summary>TrackerException → GraphQL error sạch; lỗi khác giữ mặc định (che chi tiết ở prod).</summary>
+/// <summary>TrackerException → clean GraphQL error; other errors keep defaults (details hidden in prod).</summary>
 public sealed class TrackerErrorFilter : IErrorFilter
 {
     public IError OnError(IError error) =>
