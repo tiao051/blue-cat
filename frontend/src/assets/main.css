@@ -82,6 +82,35 @@ body {
   font-smooth: never;
 }
 
+/*
+ * "Shaders on" — screen-space atmosphere, like a shader pack over the blocky world:
+ * a golden-hour light shaft + warm ambient glow behind the content...
+ */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    /* god ray: soft diagonal beam from the top-left */
+    linear-gradient(115deg, rgba(255, 208, 120, 0.14) 0%, rgba(255, 208, 120, 0.05) 22%, transparent 45%),
+    /* warm sun glow pooling near the top */
+    radial-gradient(ellipse 70% 45% at 22% -8%, rgba(255, 186, 92, 0.22), transparent 60%),
+    /* faint cool bounce light from below, torch-lit cave feel */
+    radial-gradient(ellipse 80% 40% at 78% 108%, rgba(120, 160, 90, 0.1), transparent 65%);
+}
+
+/* ...and a gentle vignette over everything, corners falling into shadow */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  pointer-events: none;
+  background: radial-gradient(ellipse 105% 105% at 50% 45%, transparent 58%, rgba(10, 8, 5, 0.32) 100%);
+}
+
 /* Data — dates, numbers, values — pixel mono, column-aligned */
 .data {
   font-family: var(--font-data);

@@ -34,6 +34,11 @@ const tabs = [
 </script>
 
 <template>
+  <!-- square pixel particles drifting over the world, MC-style fireflies at dusk -->
+  <div class="fireflies" aria-hidden="true">
+    <span v-for="i in 9" :key="i" class="fly" />
+  </div>
+
   <KeyGate v-if="!session.hasKey" />
   <template v-else>
     <div class="shell" :class="{ fullscreen: route.meta.fullscreen }">
@@ -68,18 +73,58 @@ const tabs = [
 <style scoped>
 .shell {
   min-height: 100dvh;
+  position: relative;
+  z-index: 1; /* content rides above the atmosphere layers */
 }
 .content {
   min-height: 100dvh;
+}
+
+/* fireflies: blocky particles with a bloom halo, drifting slowly */
+.fireflies {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+.fly {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: #ffd97a;
+  box-shadow: 0 0 10px 3px rgba(255, 200, 90, 0.55); /* the bloom */
+  animation: drift 14s ease-in-out infinite alternate, flicker 3.4s steps(2) infinite;
+  opacity: 0.8;
+}
+.fly:nth-child(1) { left: 8%;  top: 72%; animation-duration: 16s, 3.1s; }
+.fly:nth-child(2) { left: 21%; top: 34%; animation-duration: 13s, 2.6s; animation-delay: -4s, 0.4s; }
+.fly:nth-child(3) { left: 36%; top: 84%; animation-duration: 18s, 3.8s; animation-delay: -9s, 1.1s; }
+.fly:nth-child(4) { left: 52%; top: 18%; animation-duration: 15s, 2.9s; animation-delay: -2s, 0.7s; background: #d9ff8a; box-shadow: 0 0 10px 3px rgba(180, 240, 100, 0.5); }
+.fly:nth-child(5) { left: 64%; top: 62%; animation-duration: 12s, 3.3s; animation-delay: -7s, 1.6s; }
+.fly:nth-child(6) { left: 78%; top: 40%; animation-duration: 17s, 2.4s; animation-delay: -11s, 0.2s; }
+.fly:nth-child(7) { left: 88%; top: 78%; animation-duration: 14s, 3.6s; animation-delay: -5s, 1.9s; background: #d9ff8a; box-shadow: 0 0 10px 3px rgba(180, 240, 100, 0.5); }
+.fly:nth-child(8) { left: 44%; top: 52%; animation-duration: 19s, 2.8s; animation-delay: -13s, 0.9s; }
+.fly:nth-child(9) { left: 12%; top: 12%; animation-duration: 15s, 3.2s; animation-delay: -8s, 1.4s; }
+
+@keyframes drift {
+  0%   { transform: translate(0, 0); }
+  50%  { transform: translate(22px, -30px); }
+  100% { transform: translate(-14px, -56px); }
+}
+@keyframes flicker {
+  0%, 100% { opacity: 0.85; }
+  50%      { opacity: 0.25; }
 }
 /* content lives on one big inventory panel — like an opened chest over the world */
 .content-inner {
   margin: 0.9rem auto calc(92px + env(safe-area-inset-bottom));
   padding: 1.25rem 1rem;
   max-width: 640px;
-  background: var(--surface);
+  /* subtle top-light on the panel + soft ambient shadow beneath it (shader AO) */
+  background: linear-gradient(180deg, #cdcdcd 0%, var(--surface) 18%, #bfbfbf 100%);
   border: 2px solid #1a1a1a;
-  box-shadow: var(--bevel-out);
+  box-shadow: var(--bevel-out), 0 18px 48px rgba(0, 0, 0, 0.55);
 }
 .fullscreen .content-inner {
   margin: 0;
@@ -130,6 +175,7 @@ const tabs = [
   color: #fff;
   border-color: #ffffff;
   background: rgba(139, 139, 139, 0.4);
+  box-shadow: var(--bevel-in), 0 0 12px rgba(255, 255, 180, 0.3); /* selected-slot glow */
 }
 .nav-icon {
   width: 20px;

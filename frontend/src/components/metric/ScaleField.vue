@@ -89,7 +89,8 @@ function onPointerUp() {
   font-weight: 700;
   line-height: 1;
   color: var(--accent-bright);
-  text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.55);
+  /* hard pixel shadow + soft bloom, like the xp counter under shaders */
+  text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.55), 0 0 18px rgba(124, 220, 60, 0.55);
 }
 .scale-readout.empty .value {
   color: var(--text-faint);
@@ -119,7 +120,8 @@ function onPointerUp() {
 }
 .scale-cell.active {
   background: var(--accent-bright);
-  box-shadow: inset 0 3px 0 rgba(255, 255, 255, 0.35), inset 0 -3px 0 rgba(0, 0, 0, 0.3);
+  box-shadow: inset 0 3px 0 rgba(255, 255, 255, 0.35), inset 0 -3px 0 rgba(0, 0, 0, 0.3),
+    0 0 8px rgba(108, 198, 39, 0.55); /* bloom */
 }
 .scale-cell.current {
   outline: 2px solid #ffffa0;

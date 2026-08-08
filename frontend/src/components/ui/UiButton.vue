@@ -51,6 +51,7 @@ const emit = defineEmits<{ click: [] }>()
 .btn:not(:disabled):hover {
   filter: brightness(1.12);
   color: #ffffa0; /* MC hover text */
+  box-shadow: var(--bevel-out), 0 0 14px rgba(255, 220, 120, 0.25); /* torchlight bloom */
 }
 .btn:not(:disabled):active {
   box-shadow: var(--bevel-in); /* pressed = bevel inverts */

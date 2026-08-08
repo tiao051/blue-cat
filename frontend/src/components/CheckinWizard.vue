@@ -170,7 +170,7 @@ function finish() {
     max-width: 520px;
     max-height: min(720px, 90vh);
     border: 2px solid #1a1a1a;
-    box-shadow: var(--bevel-out);
+    box-shadow: var(--bevel-out), 0 22px 56px rgba(0, 0, 0, 0.6); /* dialog AO */
     overflow: hidden;
   }
 }
