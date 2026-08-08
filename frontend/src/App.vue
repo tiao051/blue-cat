@@ -43,9 +43,33 @@ const tabs = [
     <div class="horizon"></div>
   </div>
 
-  <!-- square pixel particles drifting over the world, MC-style fireflies at dusk -->
-  <div class="fireflies" aria-hidden="true">
-    <span v-for="i in 9" :key="i" class="fly" />
+  <!-- pixel bees buzzing around the night garden -->
+  <div class="bees" aria-hidden="true">
+    <div v-for="i in 4" :key="i" class="bee" :class="`b${i}`">
+      <div class="bee-bob">
+        <svg viewBox="0 0 14 11" shape-rendering="crispEdges" xmlns="http://www.w3.org/2000/svg">
+          <!-- wing, fluttering -->
+          <g class="wing">
+            <rect x="5" y="0" width="5" height="2" fill="#e6eef5" opacity="0.75" />
+            <rect x="6" y="2" width="3" height="1" fill="#e6eef5" opacity="0.6" />
+          </g>
+          <!-- striped body -->
+          <rect x="2" y="3" width="10" height="6" fill="#e8c33c" />
+          <rect x="2" y="3" width="10" height="1" fill="#f2d465" />
+          <rect x="2" y="8" width="10" height="1" fill="#c9a52e" />
+          <rect x="4" y="3" width="2" height="6" fill="#6e4f23" />
+          <rect x="8" y="3" width="2" height="6" fill="#6e4f23" />
+          <!-- eye + antenna -->
+          <rect x="10" y="4" width="2" height="2" fill="#1d1d21" />
+          <rect x="12" y="2" width="1" height="1" fill="#1d1d21" />
+          <!-- stinger -->
+          <rect x="1" y="5" width="1" height="2" fill="#b8b8b8" />
+          <!-- little legs -->
+          <rect x="4" y="9" width="1" height="1" fill="#1d1d21" />
+          <rect x="7" y="9" width="1" height="1" fill="#1d1d21" />
+        </svg>
+      </div>
+    </div>
   </div>
 
   <KeyGate v-if="!session.hasKey" />
@@ -157,41 +181,59 @@ const tabs = [
   box-shadow: 0 -18px 30px rgba(0, 0, 0, 0.35);
 }
 
-/* fireflies: blocky particles with a bloom halo, drifting slowly */
-.fireflies {
+/* pixel bees: gentle roaming + a quick hover bob + fluttering wings */
+.bees {
   position: fixed;
   inset: 0;
   z-index: 0;
   pointer-events: none;
   overflow: hidden;
 }
-.fly {
+.bee {
   position: absolute;
-  width: 4px;
-  height: 4px;
-  background: #ffd97a;
-  box-shadow: 0 0 10px 3px rgba(255, 200, 90, 0.55); /* the bloom */
-  animation: drift 14s ease-in-out infinite alternate, flicker 3.4s steps(2) infinite;
-  opacity: 0.8;
+  width: 30px;
+  height: 24px;
+  animation: bee-roam ease-in-out infinite alternate;
+  opacity: 0.9;
 }
-.fly:nth-child(1) { left: 8%;  top: 72%; animation-duration: 16s, 3.1s; }
-.fly:nth-child(2) { left: 21%; top: 34%; animation-duration: 13s, 2.6s; animation-delay: -4s, 0.4s; }
-.fly:nth-child(3) { left: 36%; top: 84%; animation-duration: 18s, 3.8s; animation-delay: -9s, 1.1s; }
-.fly:nth-child(4) { left: 52%; top: 18%; animation-duration: 15s, 2.9s; animation-delay: -2s, 0.7s; background: #d9ff8a; box-shadow: 0 0 10px 3px rgba(180, 240, 100, 0.5); }
-.fly:nth-child(5) { left: 64%; top: 62%; animation-duration: 12s, 3.3s; animation-delay: -7s, 1.6s; }
-.fly:nth-child(6) { left: 78%; top: 40%; animation-duration: 17s, 2.4s; animation-delay: -11s, 0.2s; }
-.fly:nth-child(7) { left: 88%; top: 78%; animation-duration: 14s, 3.6s; animation-delay: -5s, 1.9s; background: #d9ff8a; box-shadow: 0 0 10px 3px rgba(180, 240, 100, 0.5); }
-.fly:nth-child(8) { left: 44%; top: 52%; animation-duration: 19s, 2.8s; animation-delay: -13s, 0.9s; }
-.fly:nth-child(9) { left: 12%; top: 12%; animation-duration: 15s, 3.2s; animation-delay: -8s, 1.4s; }
+.bee svg {
+  width: 100%;
+  height: 100%;
+  image-rendering: pixelated;
+}
+/* two of them fly the other way */
+.b2 svg,
+.b4 svg {
+  transform: scaleX(-1);
+}
+.b1 { left: 12%; top: 34%; animation-duration: 21s; }
+.b2 { left: 74%; top: 22%; animation-duration: 26s; animation-delay: -9s; width: 24px; height: 19px; }
+.b3 { left: 40%; top: 64%; animation-duration: 24s; animation-delay: -15s; width: 26px; height: 21px; opacity: 0.75; }
+.b4 { left: 86%; top: 56%; animation-duration: 19s; animation-delay: -5s; }
 
-@keyframes drift {
-  0%   { transform: translate(0, 0); }
-  50%  { transform: translate(22px, -30px); }
-  100% { transform: translate(-14px, -56px); }
+.bee-bob {
+  width: 100%;
+  height: 100%;
+  animation: bee-bob 1.05s ease-in-out infinite alternate;
 }
-@keyframes flicker {
-  0%, 100% { opacity: 0.85; }
-  50%      { opacity: 0.25; }
+.wing {
+  transform-origin: 7px 3px;
+  animation: bee-flap 0.18s steps(2) infinite;
+}
+
+@keyframes bee-roam {
+  0%   { transform: translate(0, 0); }
+  30%  { transform: translate(46px, -18px); }
+  60%  { transform: translate(12px, 22px); }
+  100% { transform: translate(-38px, -8px); }
+}
+@keyframes bee-bob {
+  from { transform: translateY(0); }
+  to   { transform: translateY(-5px); }
+}
+@keyframes bee-flap {
+  from { transform: scaleY(1); }
+  to   { transform: scaleY(0.35); }
 }
 /* content lives on one big inventory panel — like an opened chest over the world */
 .content-inner {
