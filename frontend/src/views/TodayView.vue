@@ -73,8 +73,12 @@ const quickRatio = computed(() => {
   return `${e.quickDone}/${e.quickPlanned}`
 })
 
-async function refresh() {
-  loading.value = true
+/**
+ * Fetches everything. `silent` skips the loading flag so the template never
+ * unmounts — mutations must NEVER flash the whole screen (principle 3 vibes).
+ */
+async function refresh(silent = false) {
+  if (!silent) loading.value = true
   error.value = ''
   try {
     const [todayData, yData, taskData] = await Promise.all([
@@ -95,27 +99,46 @@ async function refresh() {
   } catch (e) {
     error.value = (e as Error).message
   } finally {
-    loading.value = false
+    if (!silent) loading.value = false
   }
 }
 
+/** Runs a mutation and refreshes silently in the background — no flicker. */
 async function run(fn: () => Promise<unknown>) {
   error.value = ''
   try {
     await fn()
-    await refresh()
+    await refresh(true)
   } catch (e) {
     error.value = (e as Error).message
   }
 }
 
-const onHabitChange = (habitKey: string, state: HabitState, hours: number | null, quality: number | null) =>
-  run(() =>
-    executeMutation(SET_HABIT_MUTATION, { date: today, habitKey, state, hours, quality }),
-  )
+// Habit ticks and dayType changes return the updated entry — apply it directly,
+// zero refetch, zero flicker
+const onHabitChange = async (habitKey: string, state: HabitState, hours: number | null, quality: number | null) => {
+  error.value = ''
+  try {
+    const data = await executeMutation<{ setHabit: DailyEntry }>(SET_HABIT_MUTATION, {
+      date: today, habitKey, state, hours, quality,
+    })
+    entry.value = data.setHabit
+  } catch (e) {
+    error.value = (e as Error).message
+  }
+}
 
-const onDayTypeChange = (dayType: string | number | null) =>
-  run(() => executeMutation(SET_DAY_TYPE_MUTATION, { date: today, dayType }))
+const onDayTypeChange = async (dayType: string | number | null) => {
+  error.value = ''
+  try {
+    const data = await executeMutation<{ setDayType: DailyEntry }>(SET_DAY_TYPE_MUTATION, {
+      date: today, dayType,
+    })
+    entry.value = data.setDayType
+  } catch (e) {
+    error.value = (e as Error).message
+  }
+}
 
 const addTask = (plannedDate: string) => (title: string) =>
   run(() => executeMutation(ADD_TASK_MUTATION, { title, plannedDate, clientDate: today }))
@@ -140,7 +163,7 @@ const submitDeferred = (field: DeferredField) => {
   )
 }
 
-onMounted(refresh)
+onMounted(() => refresh())
 </script>
 
 <template>
