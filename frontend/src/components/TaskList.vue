@@ -120,31 +120,32 @@ function submit() {
 .checkbox:disabled {
   cursor: default;
 }
+/* item-slot checkbox, same language as HabitTickList */
 .box {
-  width: 20px;
-  height: 20px;
-  border: 1.5px solid var(--border-strong);
-  border-radius: 6px;
+  width: 22px;
+  height: 22px;
+  border: 1px solid #373737;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--surface);
-  transition: border-color 100ms, background 100ms, transform 100ms;
+  background: #8b8b8b;
+  box-shadow: var(--bevel-in);
+  transition: background 60ms;
 }
 .box svg {
   width: 13px;
   height: 13px;
 }
 .checkbox:not(:disabled):hover .box {
-  border-color: var(--accent);
+  background: #9d9d9d;
 }
 .checkbox:not(:disabled):active .box {
-  transform: scale(0.9);
+  background: #777;
 }
 .done .box {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: var(--on-accent);
+  background: var(--accent-bright);
+  color: #173300;
+  box-shadow: var(--bevel-out);
 }
 .done .box svg path {
   stroke-dasharray: 20;

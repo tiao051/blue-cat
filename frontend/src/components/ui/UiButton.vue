@@ -1,4 +1,6 @@
 <script setup lang="ts">
+// Minecraft stone button: gray slab, black outline, raised bevel, label with hard
+// pixel shadow. Hover turns the label pale yellow (the classic MC selected color).
 withDefaults(
   defineProps<{
     label?: string
@@ -33,29 +35,34 @@ const emit = defineEmits<{ click: [] }>()
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  border-radius: var(--radius);
-  border: 1px solid transparent;
-  font-weight: 500;
-  font-size: 0.9rem;
+  border: 2px solid #1a1a1a;
+  font-weight: 400;
+  font-size: 0.85rem;
   cursor: pointer;
-  transition: background 100ms, border-color 100ms;
   user-select: none;
+  text-shadow: var(--px-text-shadow);
+  box-shadow: var(--bevel-out);
+  transition: filter 60ms;
 }
 .btn:disabled {
-  opacity: 0.45;
+  opacity: 0.5;
   cursor: not-allowed;
 }
+.btn:not(:disabled):hover {
+  filter: brightness(1.12);
+  color: #ffffa0; /* MC hover text */
+}
 .btn:not(:disabled):active {
-  transform: translateY(1px);
+  box-shadow: var(--bevel-in); /* pressed = bevel inverts */
 }
 .block {
   width: 100%;
 }
 
 .s-sm {
-  min-height: 32px;
+  min-height: 34px;
   padding: 0 0.75rem;
-  font-size: 0.8rem;
+  font-size: 0.75rem;
 }
 .s-md {
   min-height: 40px;
@@ -64,43 +71,44 @@ const emit = defineEmits<{ click: [] }>()
 .s-lg {
   min-height: var(--tap);
   padding: 0 1.25rem;
-  font-size: 1rem;
+  font-size: 0.95rem;
 }
 
+/* primary: XP-green slab */
 .v-primary {
-  background: var(--accent);
-  color: var(--on-accent);
-}
-.v-primary:not(:disabled):hover {
-  background: var(--accent-strong);
+  background: #578a2c;
+  color: #ffffff;
 }
 
+/* ghost: the classic gray stone button */
 .v-ghost {
-  background: transparent;
-  border-color: var(--border-strong);
-  color: var(--text);
-}
-.v-ghost:not(:disabled):hover {
-  border-color: var(--accent);
-  color: var(--accent);
+  background: #6f6f6f;
+  color: #ffffff;
 }
 
+/* subtle: flat text action, panel-colored */
 .v-subtle {
   background: transparent;
+  border-color: transparent;
+  box-shadow: none;
   color: var(--text-muted);
+  text-shadow: none;
 }
 .v-subtle:not(:disabled):hover {
   color: var(--text);
   background: var(--surface-raised);
+  filter: none;
+}
+.v-subtle:not(:disabled):active {
+  box-shadow: none;
 }
 
 .spinner {
-  width: 14px;
-  height: 14px;
-  border: 2px solid currentColor;
+  width: 12px;
+  height: 12px;
+  border: 3px solid currentColor;
   border-right-color: transparent;
-  border-radius: 50%;
-  animation: spin 0.7s linear infinite;
+  animation: spin 0.8s steps(8) infinite;
 }
 @keyframes spin {
   to {

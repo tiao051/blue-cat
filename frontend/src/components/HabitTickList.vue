@@ -176,31 +176,32 @@ function setQuality(habit: Habit, quality: string | number | null) {
   cursor: not-allowed;
   opacity: 0.45;
 }
+/* the checkbox is an item slot: sunken gray; done = a lime block placed in it */
 .box {
-  width: 22px;
-  height: 22px;
-  border: 1.5px solid var(--border-strong);
-  border-radius: 6px;
+  width: 24px;
+  height: 24px;
+  border: 1px solid #373737;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--surface);
-  transition: border-color 100ms, background 100ms, transform 100ms;
+  background: #8b8b8b;
+  box-shadow: var(--bevel-in);
+  transition: background 60ms;
 }
 .box svg {
   width: 14px;
   height: 14px;
 }
 .checkbox:not(:disabled):hover .box {
-  border-color: var(--accent);
+  background: #9d9d9d;
 }
 .checkbox:not(:disabled):active .box {
-  transform: scale(0.9);
+  background: #777;
 }
 .done .box {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: var(--on-accent);
+  background: var(--accent-bright);
+  color: #173300;
+  box-shadow: var(--bevel-out);
 }
 /* check-drawing animation — Things-style micro-interaction */
 .done .box svg path {
@@ -214,9 +215,8 @@ function setQuality(habit: Habit, quality: string | number | null) {
   }
 }
 .not-done .box {
-  color: var(--text-faint);
-  border-color: var(--border-strong);
-  background: var(--surface-raised);
+  color: #e8e8e8;
+  background: #5e5e5e;
 }
 
 .habit-label {

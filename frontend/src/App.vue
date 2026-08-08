@@ -72,17 +72,25 @@ const tabs = [
 .content {
   min-height: 100dvh;
 }
+/* content lives on one big inventory panel — like an opened chest over the world */
 .content-inner {
-  padding: 1.25rem 1rem calc(84px + env(safe-area-inset-bottom));
+  margin: 0.9rem auto calc(92px + env(safe-area-inset-bottom));
+  padding: 1.25rem 1rem;
   max-width: 640px;
-  margin: 0 auto;
+  background: var(--surface);
+  border: 2px solid #1a1a1a;
+  box-shadow: var(--bevel-out);
 }
 .fullscreen .content-inner {
+  margin: 0;
   padding: 0;
   max-width: none;
+  background: transparent;
+  border: none;
+  box-shadow: none;
 }
 
-/* ---- Mobile: bottom tab bar ---- */
+/* ---- Mobile: the hotbar ---- */
 .nav {
   position: fixed;
   bottom: 0;
@@ -90,60 +98,55 @@ const tabs = [
   right: 0;
   z-index: 50;
   display: flex;
-  border-top: 1px solid var(--border);
-  background: var(--surface);
-  padding-bottom: env(safe-area-inset-bottom);
+  justify-content: center;
+  background: rgba(12, 10, 8, 0.82);
+  border-top: 2px solid #1a1a1a;
+  padding: 6px 6px calc(6px + env(safe-area-inset-bottom));
 }
 .brand {
   display: none;
 }
 .nav-items {
   display: flex;
+  gap: 6px;
   flex: 1;
+  max-width: 420px;
 }
+/* each tab is a hotbar slot; the active one gets the thick white selection frame */
 .nav-item {
   flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 3px;
-  padding: 0.55rem 0 0.5rem;
+  gap: 2px;
+  padding: 0.45rem 0 0.35rem;
   text-decoration: none;
-  color: var(--text-muted);
-  position: relative;
+  color: #cfcfcf;
+  background: rgba(139, 139, 139, 0.25);
+  border: 2px solid #4f4f4f;
+  box-shadow: var(--bevel-in);
 }
 .nav-item.active {
-  color: var(--accent);
-}
-/* needle: amber bar above the active tab (mobile) */
-.nav-item::before {
-  content: '';
-  position: absolute;
-  top: -1px;
-  left: 25%;
-  right: 25%;
-  height: 2px;
-  background: transparent;
-  transition: background 120ms;
-}
-.nav-item.active::before {
-  background: var(--accent);
+  color: #fff;
+  border-color: #ffffff;
+  background: rgba(139, 139, 139, 0.4);
 }
 .nav-icon {
-  width: 21px;
-  height: 21px;
+  width: 20px;
+  height: 20px;
 }
 .nav-label {
-  font-size: 0.66rem;
+  font-size: 0.6rem;
   font-family: var(--font-data);
   letter-spacing: 0.02em;
+  text-shadow: var(--px-text-shadow);
 }
 
-/* ---- Desktop ≥900px: left sidebar ---- */
+/* ---- Desktop ≥900px: vertical hotbar on the left ---- */
 @media (min-width: 900px) {
   .shell {
     display: grid;
-    grid-template-columns: 200px 1fr;
+    grid-template-columns: 210px 1fr;
   }
   .shell.fullscreen {
     display: block;
@@ -154,59 +157,46 @@ const tabs = [
     bottom: auto;
     height: 100dvh;
     flex-direction: column;
+    justify-content: flex-start;
     border-top: none;
-    border-right: 1px solid var(--border);
-    background: var(--surface);
+    border-right: 2px solid #1a1a1a;
+    background: rgba(12, 10, 8, 0.82);
     padding: 1.25rem 0.75rem;
-    gap: 1.5rem;
+    gap: 1.25rem;
   }
   .brand {
     display: block;
-    margin: 0 0 0 0.65rem;
-    color: var(--accent);
+    margin: 0 0 0 0.4rem;
+    color: var(--accent-bright);
+    text-shadow: var(--px-text-shadow);
   }
   .nav-items {
     flex-direction: column;
-    gap: 0.25rem;
+    gap: 6px;
     flex: initial;
+    max-width: none;
   }
   .nav-item {
     flex-direction: row;
     gap: 0.65rem;
     padding: 0.55rem 0.65rem;
-    border-radius: var(--radius);
     align-items: center;
   }
   .nav-item:hover {
-    color: var(--text);
-    background: var(--surface-raised);
-  }
-  .nav-item.active {
-    color: var(--accent);
-    background: var(--accent-dim);
-  }
-  /* desktop needle: vertical bar left of the active item */
-  .nav-item::before {
-    top: 20%;
-    bottom: 20%;
-    left: -0.75rem;
-    right: auto;
-    width: 2px;
-    height: auto;
+    color: #ffffa0;
   }
   .nav-icon {
-    width: 19px;
-    height: 19px;
+    width: 18px;
+    height: 18px;
   }
   .nav-label {
-    font-size: 0.85rem;
+    font-size: 0.78rem;
     font-family: var(--font-ui);
-    font-weight: 500;
   }
   .content-inner {
-    padding: 2.5rem 2rem 3rem;
+    margin: 2rem;
+    padding: 1.75rem 2rem;
     max-width: 720px;
-    margin: 0;
   }
 }
 </style>

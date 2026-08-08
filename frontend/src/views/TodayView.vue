@@ -272,8 +272,8 @@ onMounted(refresh)
 }
 .date-title {
   margin: 0;
-  font-size: 1.55rem;
-  letter-spacing: -0.015em;
+  font-size: 1.4rem;
+  font-weight: 700;
 }
 .overline {
   margin: 0;
@@ -293,27 +293,35 @@ onMounted(refresh)
   text-transform: none;
 }
 
-/* Check-in CTA: panel row — mono tag, arrow slides on hover */
+/* Check-in CTA: a proper Minecraft button — beveled slab, pixel shadow, yellow hover text */
 .cta {
   display: flex;
   align-items: center;
   gap: 0.75rem;
   min-height: 52px;
   padding: 0 1rem;
-  border-radius: var(--radius);
-  border: 1px solid transparent;
+  border: 2px solid #1a1a1a;
+  box-shadow: var(--bevel-out);
   font-family: var(--font-ui);
-  font-size: 0.98rem;
-  font-weight: 500;
+  font-size: 0.95rem;
+  color: #fff;
+  text-shadow: var(--px-text-shadow);
   cursor: pointer;
-  transition: background 120ms, border-color 120ms;
+  transition: filter 60ms;
+}
+.cta:hover {
+  filter: brightness(1.12);
+  color: #ffffa0;
+}
+.cta:active {
+  box-shadow: var(--bevel-in);
 }
 .cta-tag {
-  font-size: 0.68rem;
+  font-size: 0.62rem;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   padding: 0.15rem 0.45rem;
-  border-radius: 3px;
+  background: rgba(0, 0, 0, 0.3);
 }
 .cta-label {
   flex: 1;
@@ -321,42 +329,25 @@ onMounted(refresh)
 }
 .cta-arrow {
   font-family: var(--font-data);
-  transition: transform 140ms ease-out;
+  transition: transform 140ms steps(3);
 }
 .cta:hover .cta-arrow {
   transform: translateX(4px);
 }
 .cta-primary {
-  background: var(--accent);
-  color: var(--on-accent);
-}
-.cta-primary:hover {
-  background: var(--accent-strong);
-}
-.cta-primary .cta-tag {
-  background: color-mix(in srgb, var(--on-accent) 18%, transparent);
+  background: #578a2c;
 }
 .cta-ghost {
-  background: var(--surface);
-  border-color: var(--border-strong);
-  color: var(--text);
-}
-.cta-ghost:hover {
-  border-color: var(--accent);
-}
-.cta-ghost .cta-tag {
-  background: var(--surface-raised);
-  color: var(--text-muted);
+  background: #6f6f6f;
 }
 
 .deferred-row {
-  border: 1px dashed var(--border-strong);
-  border-radius: var(--radius);
+  border: 2px dashed #555;
   padding: 0.75rem 0.9rem;
   display: flex;
   flex-direction: column;
   gap: 0.6rem;
-  background: var(--surface);
+  background: var(--surface-raised);
 }
 .deferred-label {
   margin: 0;

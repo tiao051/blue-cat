@@ -35,18 +35,19 @@ function save() {
 }
 .gate-card {
   width: 100%;
-  max-width: 340px;
+  max-width: 360px;
   display: flex;
   flex-direction: column;
   gap: 0.9rem;
   padding: 1.75rem;
-  border: 1px solid var(--border);
-  border-radius: 10px;
+  border: 2px solid #1a1a1a;
+  box-shadow: var(--bevel-out);
   background: var(--surface);
 }
 .gate-title {
   margin: 0;
-  font-size: 1.25rem;
+  font-size: 1.15rem;
+  font-weight: 700;
 }
 .overline {
   margin: 0;

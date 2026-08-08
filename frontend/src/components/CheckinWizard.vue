@@ -150,7 +150,7 @@ function finish() {
   position: fixed;
   inset: 0;
   z-index: 100;
-  background: var(--bg);
+  background: rgba(12, 10, 8, 0.75); /* the world darkens behind, like a menu opening */
   display: flex;
   justify-content: center;
 }
@@ -158,23 +158,20 @@ function finish() {
   display: flex;
   flex-direction: column;
   width: 100%;
-  background: var(--bg);
+  background: var(--surface);
 }
 
-/* Desktop: a framed centered panel — no full-width stretched buttons */
+/* Desktop: a framed centered inventory panel */
 @media (min-width: 900px) {
   .wizard-backdrop {
     align-items: center;
-    background: color-mix(in srgb, var(--bg) 80%, transparent);
-    backdrop-filter: blur(2px);
   }
   .wizard {
     max-width: 520px;
     max-height: min(720px, 90vh);
-    border: 1px solid var(--border);
-    border-radius: 10px;
+    border: 2px solid #1a1a1a;
+    box-shadow: var(--bevel-out);
     overflow: hidden;
-    background: var(--surface);
   }
 }
 
@@ -183,7 +180,7 @@ function finish() {
   align-items: center;
   gap: 0.75rem;
   padding: 0.75rem 1rem;
-  border-bottom: 1px solid var(--border);
+  border-bottom: 2px solid var(--border);
 }
 .close {
   border: none;
@@ -197,23 +194,27 @@ function finish() {
 .close:hover {
   color: var(--text);
 }
+/* mini XP bar as the step progress */
 .progress {
   flex: 1;
   display: flex;
-  gap: 5px;
+  gap: 3px;
+  padding: 3px;
+  background: #4a4a4a;
+  border: 1px solid #1a1a1a;
+  box-shadow: var(--bevel-in);
 }
 .bar {
   flex: 1;
-  height: 3px;
-  border-radius: 1.5px;
-  background: var(--surface-raised);
+  height: 6px;
+  background: #2f2f2f;
 }
 .bar.done {
-  background: var(--accent);
-  opacity: 0.45;
+  background: var(--accent-bright);
+  opacity: 0.6;
 }
 .bar.active {
-  background: var(--accent);
+  background: var(--accent-bright);
 }
 .title {
   white-space: nowrap;
@@ -221,6 +222,7 @@ function finish() {
 .step-counter {
   font-size: 0.7rem;
   color: var(--accent);
+  font-weight: 700;
   white-space: nowrap;
 }
 .wizard-body {
@@ -242,8 +244,8 @@ function finish() {
 }
 .sleep-total {
   text-align: center;
-  font-size: 1.2rem;
-  font-weight: 600;
+  font-size: 1.15rem;
+  font-weight: 700;
   color: var(--accent);
   margin: 0;
 }
@@ -256,7 +258,7 @@ function finish() {
   display: flex;
   gap: 0.75rem;
   padding: 1rem 1.25rem calc(1rem + env(safe-area-inset-bottom));
-  border-top: 1px solid var(--border);
+  border-top: 2px solid var(--border);
 }
 .advance {
   flex: 1;

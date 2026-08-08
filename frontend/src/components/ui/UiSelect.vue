@@ -44,12 +44,17 @@ function onChange(e: Event) {
   appearance: none;
   min-height: 40px;
   padding: 0 1.9rem 0 0.75rem;
-  border: 1px solid var(--border-strong);
-  border-radius: var(--radius);
-  background: var(--surface);
-  color: var(--text);
-  font-size: 0.9rem;
+  border: 2px solid #1a1a1a;
+  background: #6f6f6f;
+  color: #fff;
+  text-shadow: var(--px-text-shadow);
+  box-shadow: var(--bevel-out);
+  font-size: 0.85rem;
+  font-family: var(--font-ui);
   cursor: pointer;
+}
+.select:hover {
+  filter: brightness(1.12);
 }
 .chevron {
   position: absolute;
@@ -57,7 +62,8 @@ function onChange(e: Event) {
   top: 50%;
   transform: translateY(-50%);
   pointer-events: none;
-  color: var(--text-muted);
+  color: #efefef;
   font-size: 0.7rem;
+  text-shadow: var(--px-text-shadow);
 }
 </style>

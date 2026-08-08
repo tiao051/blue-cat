@@ -44,28 +44,30 @@ function toggle(value: string) {
   flex-wrap: wrap;
   gap: 0.5rem;
 }
+/* chips as stone buttons; selected = lime block */
 .chip {
   padding: 0 0.9rem;
   min-height: var(--tap);
-  border-radius: var(--radius);
-  border: 1px solid var(--border-strong);
-  background: var(--surface);
-  color: var(--text);
-  font-size: 0.9rem;
+  border: 2px solid #1a1a1a;
+  background: #6f6f6f;
+  color: #fff;
+  text-shadow: var(--px-text-shadow);
+  font-size: 0.85rem;
   cursor: pointer;
-  transition: background 100ms, border-color 100ms;
+  box-shadow: var(--bevel-out);
+  transition: filter 60ms;
 }
 .chip:not(:disabled):not(.selected):hover {
-  border-color: var(--accent);
+  filter: brightness(1.12);
+  color: #ffffa0;
 }
 .chip.selected {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: var(--on-accent);
-  font-weight: 500;
+  background: var(--accent-bright);
+  color: #173300;
+  text-shadow: none;
 }
 .chip:disabled {
-  opacity: 0.35;
+  opacity: 0.4;
   cursor: not-allowed;
 }
 .hint {

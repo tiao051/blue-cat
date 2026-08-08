@@ -65,46 +65,52 @@ const display = computed(() =>
 </template>
 
 <style scoped>
+/* MC style: two stone nudge buttons flanking a sunken slot */
 .stepper {
   display: inline-flex;
   align-items: stretch;
-  border: 1px solid var(--border-strong);
-  border-radius: var(--radius);
-  overflow: hidden;
-  background: var(--surface);
+  gap: 3px;
 }
 .stepper.disabled {
-  opacity: 0.45;
+  opacity: 0.5;
 }
 .nudge {
   width: var(--tap);
   min-height: var(--tap);
-  border: none;
-  background: transparent;
-  color: var(--text-muted);
-  font-size: 1.3rem;
+  border: 2px solid #1a1a1a;
+  background: #6f6f6f;
+  color: #fff;
+  text-shadow: var(--px-text-shadow);
+  font-size: 1.2rem;
   font-family: var(--font-data);
   cursor: pointer;
+  box-shadow: var(--bevel-out);
 }
 .nudge:not(:disabled):hover {
-  color: var(--accent);
-  background: var(--accent-dim);
+  filter: brightness(1.12);
+  color: #ffffa0;
+}
+.nudge:not(:disabled):active {
+  box-shadow: var(--bevel-in);
 }
 .nudge:disabled {
   cursor: not-allowed;
 }
 .value {
   width: 4.5rem;
-  border: none;
-  border-left: 1px solid var(--border);
-  border-right: 1px solid var(--border);
-  background: transparent;
-  color: var(--text);
+  border: 1px solid #373737;
+  background: #8b8b8b;
+  box-shadow: var(--bevel-in);
+  color: #fff;
+  text-shadow: var(--px-text-shadow);
   text-align: center;
-  font-size: 1.05rem;
+  font-size: 1rem;
+}
+.value::placeholder {
+  color: #d0d0d0;
 }
 .value:focus {
   outline: none;
-  background: var(--accent-dim);
+  background: #969696;
 }
 </style>

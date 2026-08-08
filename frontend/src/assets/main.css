@@ -1,61 +1,60 @@
 /*
- * Instrument — token system.
- * Light fully defined in :root; dark overrides ONLY the tokens via prefers-color-scheme.
- * Every component styles through tokens, no hardcoded colors.
+ * Full Minecraft GUI — a deliberate single-theme world (like the game itself):
+ * dark dirt backdrop, inventory-gray panels, beveled stone buttons, XP-green accent,
+ * Monocraft pixel type everywhere. All textures are hand-authored, no Mojang assets.
  */
 
-:root {
-  /* Minecraft cozy, day — "sunny plains": grass-tinted paper, spruce text, grass-green accent */
-  --bg: #eef1e6;
-  --surface: #fafbf4;
-  --surface-raised: #e2e8d5;
-  --border: #d4dcc4;
-  --border-strong: #a9b494;
-
-  /* text — deep spruce, not cold black */
-  --text: #252b1e;
-  --text-muted: #66705a;
-  --text-faint: #929d82;
-
-  /* the needle — grass green by day */
-  --accent: #4e7e2e;
-  --accent-strong: #3e6624;
-  --on-accent: #f7fbef;
-  --accent-dim: rgba(78, 126, 46, 0.12);
-
-  /* semantic — red is for errors only, never for data */
-  --danger: #b5473c;
-  --danger-dim: rgba(181, 71, 60, 0.1);
-
-  --font-ui: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --font-data: 'IBM Plex Mono', ui-monospace, 'Cascadia Mono', Consolas, monospace;
-
-  --radius: 8px;
-  --tap: 44px; /* minimum touch target */
+@font-face {
+  font-family: 'Monocraft';
+  src: url('./fonts/Monocraft.ttf') format('truetype');
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Monocraft';
+  src: url('./fonts/Monocraft-Bold.ttf') format('truetype');
+  font-weight: 600 700;
+  font-display: swap;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    /* Minecraft cozy, night — "night by torchlight": navy night sky, torch-amber glow */
-    --bg: #12151c;
-    --surface: #191d26;
-    --surface-raised: #222835;
-    --border: #2e3542;
-    --border-strong: #434c5e;
+:root {
+  /* the world behind the panel — dark dirt */
+  --bg: #26201a;
 
-    --text: #ecede6;
-    --text-muted: #949ca8;
-    --text-faint: #616876;
+  /* inventory panel grays */
+  --surface: #c6c6c6;
+  --surface-raised: #b9b9b9;
+  --border: #9a9a9a;
+  --border-strong: #555555;
 
-    /* the needle — torch amber at night */
-    --accent: #f0a94b;
-    --accent-strong: #f7bc6b;
-    --on-accent: #1a1409;
-    --accent-dim: rgba(240, 169, 75, 0.16);
+  /* text on the gray panel */
+  --text: #373737;
+  --text-muted: #5c5c5c;
+  --text-faint: #7d7d7d;
+  /* text on the dark world backdrop */
+  --text-on-bg: #fcfcfc;
 
-    --danger: #e06055;
-    --danger-dim: rgba(224, 96, 85, 0.14);
-  }
+  /* XP green */
+  --accent: #3f7f0f;
+  --accent-strong: #2f6209;
+  --accent-bright: #6cc627; /* block fills, xp bar */
+  --on-accent: #f4ffe8;
+  --accent-dim: rgba(108, 198, 39, 0.2);
+
+  /* semantic — red is for errors only, never for data */
+  --danger: #a02a22;
+  --danger-dim: rgba(160, 42, 34, 0.12);
+
+  --font-ui: 'Monocraft', 'IBM Plex Mono', ui-monospace, monospace;
+  --font-data: 'Monocraft', 'IBM Plex Mono', ui-monospace, monospace;
+
+  --radius: 0px;
+  --tap: 44px; /* minimum touch target */
+
+  /* MC bevels: raised (buttons/panels) and sunken (slots/inputs) */
+  --bevel-out: inset 2px 2px 0 rgba(255, 255, 255, 0.55), inset -2px -2px 0 rgba(0, 0, 0, 0.3);
+  --bevel-in: inset 2px 2px 0 rgba(0, 0, 0, 0.35), inset -2px -2px 0 rgba(255, 255, 255, 0.5);
+  --px-text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.7);
 }
 
 *,
@@ -71,33 +70,38 @@ html {
 body {
   margin: 0;
   font-family: var(--font-ui);
-  font-size: 15px;
-  line-height: 1.55;
-  background: var(--bg);
+  font-size: 14px;
+  line-height: 1.6;
   color: var(--text);
-  -webkit-font-smoothing: antialiased;
+  /* hand-drawn dirt tile (8x8 px, 4 browns), scaled up and pixelated */
+  background-color: var(--bg);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Crect width='8' height='8' fill='%2326201a'/%3E%3Crect x='1' y='0' width='2' height='2' fill='%232e2620'/%3E%3Crect x='5' y='1' width='2' height='2' fill='%23201a15'/%3E%3Crect x='0' y='4' width='2' height='2' fill='%23231d17'/%3E%3Crect x='3' y='3' width='2' height='2' fill='%232b231c'/%3E%3Crect x='6' y='5' width='2' height='2' fill='%23312822'/%3E%3Crect x='2' y='6' width='2' height='2' fill='%231e1813'/%3E%3C/svg%3E");
+  background-size: 64px 64px;
+  image-rendering: pixelated;
+  -webkit-font-smoothing: none;
+  font-smooth: never;
 }
 
-/* Data — dates, numbers, values — always mono, column-aligned */
+/* Data — dates, numbers, values — pixel mono, column-aligned */
 .data {
   font-family: var(--font-data);
   font-variant-numeric: tabular-nums;
 }
 
-/* Section labels: CAPS, tracked, small — structure, not decoration */
+/* Section labels: CAPS pixel type — structure, not decoration */
 .overline {
   font-family: var(--font-data);
-  font-size: 0.7rem;
+  font-size: 0.72rem;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.08em;
   color: var(--text-muted);
 }
 
 h1 {
-  font-size: 1.35rem;
-  font-weight: 600;
-  letter-spacing: -0.01em;
+  font-size: 1.3rem;
+  font-weight: 700;
+  letter-spacing: 0;
 }
 
 button {
@@ -105,30 +109,44 @@ button {
 }
 
 :focus-visible {
-  outline: 2px solid var(--accent);
+  outline: 2px solid var(--accent-bright);
   outline-offset: 2px;
 }
 
 ::selection {
-  background: var(--accent);
-  color: var(--on-accent);
+  background: var(--accent-bright);
+  color: #173300;
 }
 
-/* thin scrollbar, proper tool feel */
+/* chunky scrollbar, fits the blocky world */
 * {
   scrollbar-width: thin;
   scrollbar-color: var(--border-strong) transparent;
 }
 *::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 10px;
+  height: 10px;
 }
 *::-webkit-scrollbar-thumb {
-  background: var(--border-strong);
-  border-radius: 4px;
+  background: #7d7d7d;
+  border: 2px solid #4f4f4f;
 }
 *::-webkit-scrollbar-track {
   background: transparent;
+}
+
+/* The inventory panel: gray slab, black outline, raised bevel */
+.mc-panel {
+  background: var(--surface);
+  border: 2px solid #1a1a1a;
+  box-shadow: var(--bevel-out);
+}
+
+/* A sunken slot (inputs, checkboxes, wells) */
+.mc-slot {
+  background: #8b8b8b;
+  border: 1px solid #373737;
+  box-shadow: var(--bevel-in);
 }
 
 /* section labels with a hairline running to the end of the row */
@@ -140,7 +158,7 @@ button {
 .rule-title::after {
   content: '';
   flex: 1;
-  height: 1px;
+  height: 2px;
   background: var(--border);
 }
 

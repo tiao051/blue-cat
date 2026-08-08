@@ -76,6 +76,7 @@ function onPointerUp() {
   gap: 0.75rem;
   touch-action: pan-y;
 }
+/* XP-orb readout: green level number with a hard pixel shadow, like the xp counter */
 .scale-readout {
   display: flex;
   align-items: baseline;
@@ -84,54 +85,50 @@ function onPointerUp() {
   min-height: 3.5rem;
 }
 .scale-readout .value {
-  font-size: 3.25rem;
-  font-weight: 600;
+  font-size: 3rem;
+  font-weight: 700;
   line-height: 1;
-  color: var(--accent);
+  color: var(--accent-bright);
+  text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.55);
 }
 .scale-readout.empty .value {
   color: var(--text-faint);
+  text-shadow: none;
 }
 .scale-readout .range {
-  font-size: 1rem;
+  font-size: 0.95rem;
   color: var(--text-faint);
 }
+/* the XP bar: sunken black-framed track, lime segments */
 .scale-track {
   display: flex;
-  align-items: flex-end;
   gap: 3px;
-  height: 64px;
+  height: 44px;
   cursor: pointer;
   user-select: none;
   touch-action: none;
-  padding: 6px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  background: var(--surface);
+  padding: 5px;
+  border: 2px solid #1a1a1a;
+  background: #4a4a4a;
+  box-shadow: var(--bevel-in);
 }
-/* gauge: ticks grow taller from the bottom like a level scale */
 .scale-cell {
   flex: 1;
-  height: calc(38% + 62% * var(--cell-strength));
-  border-radius: 2px 2px 1px 1px;
-  background: var(--surface-raised);
-  transition: background 60ms, height 120ms ease-out;
+  background: #2f2f2f;
+  transition: background 60ms;
 }
 .scale-cell.active {
-  background: color-mix(
-    in srgb,
-    var(--accent) calc(30% + 70% * var(--cell-strength)),
-    var(--surface-raised)
-  );
+  background: var(--accent-bright);
+  box-shadow: inset 0 3px 0 rgba(255, 255, 255, 0.35), inset 0 -3px 0 rgba(0, 0, 0, 0.3);
 }
 .scale-cell.current {
-  outline: 1.5px solid var(--accent);
-  outline-offset: 1px;
+  outline: 2px solid #ffffa0;
+  outline-offset: 0;
 }
 .scale-bounds {
   display: flex;
   justify-content: space-between;
   color: var(--text-faint);
-  font-size: 0.75rem;
+  font-size: 0.72rem;
 }
 </style>

@@ -41,21 +41,22 @@ const model = defineModel<string | null>({ default: null })
 <style scoped>
 .segmented {
   display: inline-flex;
-  border: 1px solid var(--border-strong);
-  border-radius: var(--radius);
+  border: 2px solid #1a1a1a;
   overflow: hidden;
-  background: var(--surface);
+  background: #8b8b8b;
+  box-shadow: var(--bevel-in);
 }
 .segment {
   border: none;
   background: transparent;
-  color: var(--text-muted);
+  color: #efefef;
+  text-shadow: var(--px-text-shadow);
   cursor: pointer;
-  font-size: 0.9rem;
-  transition: background 100ms, color 100ms;
+  font-size: 0.85rem;
+  transition: background 60ms, color 60ms;
 }
 .segment + .segment {
-  border-left: 1px solid var(--border);
+  border-left: 1px solid #373737;
 }
 .segment.mono {
   font-family: var(--font-data);
@@ -72,14 +73,16 @@ const model = defineModel<string | null>({ default: null })
   font-size: 0.8rem;
 }
 .segment:not(:disabled):hover {
-  color: var(--text);
+  color: #ffffa0;
 }
 .segment.active {
-  background: var(--accent);
-  color: var(--on-accent);
+  background: var(--accent-bright);
+  color: #173300;
+  text-shadow: none;
+  box-shadow: var(--bevel-out);
 }
 .segment:disabled {
-  opacity: 0.45;
+  opacity: 0.5;
   cursor: not-allowed;
 }
 </style>

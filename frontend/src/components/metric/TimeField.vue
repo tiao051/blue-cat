@@ -16,22 +16,22 @@ function onInput(e: Event) {
 <style scoped>
 .time-input {
   width: 100%;
-  font-size: 1.9rem;
+  font-size: 1.7rem;
+  font-family: var(--font-data);
   text-align: center;
   padding: 0.6rem;
-  border: 1px solid var(--border-strong);
-  border-radius: var(--radius);
-  background: var(--surface);
-  color: var(--text);
+  border: 1px solid #373737;
+  background: #8b8b8b;
+  box-shadow: var(--bevel-in);
+  color: #fff;
+  text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.5);
 }
 .time-input:focus {
-  border-color: var(--accent);
   outline: none;
+  background: #969696;
 }
-/* webkit's calendar icon is dark and hard to see on a dark ground */
-@media (prefers-color-scheme: dark) {
-  .time-input::-webkit-calendar-picker-indicator {
-    filter: invert(0.8);
-  }
+/* webkit's calendar icon is dark and hard to see on the sunken gray slot */
+.time-input::-webkit-calendar-picker-indicator {
+  filter: invert(0.9);
 }
 </style>

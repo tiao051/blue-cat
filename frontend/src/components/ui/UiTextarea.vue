@@ -40,19 +40,25 @@ watch(model, () => requestAnimationFrame(resize))
   width: 100%;
   min-height: 6rem;
   padding: 0.75rem;
-  border: 1px solid var(--border-strong);
-  border-radius: var(--radius);
-  background: var(--surface);
-  color: var(--text);
+  border: 1px solid #373737;
+  background: #8b8b8b;
+  box-shadow: var(--bevel-in);
+  color: #fff;
+  text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.5);
   font-family: var(--font-ui);
-  font-size: 0.95rem;
-  line-height: 1.5;
+  font-size: 0.9rem;
+  line-height: 1.6;
   resize: none;
 }
 .textarea::placeholder {
-  color: var(--text-faint);
+  color: #d5d5d5;
+  text-shadow: none;
+}
+.textarea:focus {
+  outline: none;
+  background: #969696;
 }
 .textarea:disabled {
-  opacity: 0.45;
+  opacity: 0.5;
 }
 </style>
